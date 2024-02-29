@@ -1,0 +1,13 @@
+*Zone.Identifier
+.DS_Store
+.env
+.histoire/
+.idea/
+.netlify/
+.vscode/
+bun.lockb
+desktop.ini
+dist/
+node_modules/
+package-lock.json
+thumbs.db
