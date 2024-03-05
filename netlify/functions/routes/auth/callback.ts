@@ -38,9 +38,9 @@ export default function (api : TFastifyTypebox) {
       throw new ApiError('failed to fetch user details from Netlify', userErr)
     }
     try {
-      const parsedQuery = parse(req.query.state) as {
-        csrf : string
-        path : string
+      const parsedState = parse(req.query.state) as unknown as {
+        csrf : number
+        redirect_to : string
       }
       jwt = await new EncryptJWT({
         email: userRes.email,
@@ -52,7 +52,7 @@ export default function (api : TFastifyTypebox) {
         alg: 'dir',
         enc: 'A256CBC-HS512'
       }).encrypt(jwtSecret)
-      return res.setCookie('nf_token', jwt).redirect(`${req.origin}${parsedQuery.path}?csrf=${parsedQuery.csrf}`)
+      return res.setCookie('nf_token', jwt).redirect(`${req.origin}${parsedState.redirect_to}?csrf=${parsedState.csrf}`)
     } catch (parseErr) {
       throw ApiError.internalServerError('failed to parse data', parseErr)
     }

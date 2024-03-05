@@ -4,10 +4,9 @@ export const RouteAuthAuthorizeQuery = Object({
     maximum: 99999,
     minimum: 10000
   }),
-  path: Optional(String({
-    default: '/',
-    pattern: ''
-  }))
+  redirect_to: String({
+    pattern: '^/(dashboard|tickets)$'
+  })
 })
 export const RouteAuthCallbackQuery = Object({
   code: String({
@@ -15,7 +14,7 @@ export const RouteAuthCallbackQuery = Object({
     minLength: 43
   }),
   state: String({
-    pattern: '^csrf=\\d{5}&path=%2F$'
+    pattern: '^csrf=\\d{5}&redirect_to=/(dashboard|tickets)$'
   })
 })
 export const RouteForumsTopicsQuery = Object({
