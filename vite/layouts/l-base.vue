@@ -1,34 +1,37 @@
 <script setup lang="ts">
-  import {onMounted} from 'vue'
-  import {nfUser, redirect_to, wretchBase} from '~/client/utils/constants.ts'
+  import {onMounted, ref} from 'vue'
+  import {nfUser, redirectTo, wretchBase} from '~/client/utils/constants.ts'
   import type {TRouteUserInfoRes} from '~/types/response.ts'
   import {useDark} from '@vueuse/core'
   import {useRoute, useRouter} from 'vue-router'
   import {WretchError} from 'wretch/resolver'
+  import CLoadingIndicator from "~/client/components/c-loading-indicator/c-loading-indicator.vue";
   const route = useRoute()
   const router = useRouter()
+  const userLoadAttempted = ref<boolean>(false)
   onMounted(async () => {
     if (!route.meta.skipAuth) {
-      redirect_to.value = {
+      redirectTo.value = {
         name: route.name,
         path: route.path
       }
-      await router.push('/')
     }
     try {
       const userRes = await wretchBase.get('/user/info').json<TRouteUserInfoRes>()
       nfUser.value = userRes.nf
-      if (redirect_to.value && router.hasRoute(redirect_to.value.name || '')) {
-        await router.push(redirect_to.value.path)
+      if (redirectTo.value && router.hasRoute(redirectTo.value.name || '')) {
+        await router.push(redirectTo.value.path)
       } else {
         await router.push('/dashboard')
       }
     } catch (userErr) {
-      if (userErr instanceof WretchError && userErr.status === 401) {
-        await router.push('/login')
+      if (userErr instanceof WretchError && (userErr.status === 401 || userErr.status === 403)) {
+        await router.replace('/login')
       } else {
         // TODO: handle error
       }
+    } finally {
+      userLoadAttempted.value = true
     }
   })
   useDark({
@@ -36,7 +39,12 @@
   })
 </script>
 <template>
-  <RouterView/>
+  <RouterView v-if="userLoadAttempted"/>
+  <div class="flex h-full items-center justify-center w-full" v-else>
+    <div class="h-40 w-40">
+      <CLoadingIndicator/>
+    </div>
+  </div>
 </template>
 <style>
   @font-face {

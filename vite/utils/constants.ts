@@ -6,5 +6,6 @@ import wretchAbort from 'wretch/addons/abort'
 import wretchFormUrl from 'wretch/addons/formUrl'
 import wretchQueryString from 'wretch/addons/queryString'
 export const nfUser = ref<null | TNUser>(null)
-export const redirect_to = ref<null | Pick<RouteLocationNormalizedLoaded, 'name' | 'path'>>(null)
+export const redirectTo = ref<null | Pick<RouteLocationNormalizedLoaded, 'name' | 'path'>>(null)
+export const userLoginAttempted = ref<boolean>(false)
 export const wretchBase = wretch('/api').addon(wretchAbort()).addon(wretchFormUrl).addon(wretchQueryString)
