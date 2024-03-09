@@ -1,7 +1,7 @@
 import {Integer, Literal, Object, Optional, type Static, String, Union} from '@sinclair/typebox'
 export const RouteAuthAuthorizeQuery = Object({
   redirect_to: String({
-    pattern: '^/(dashboard|tickets)$'
+    pattern: '^/(dashboard|tickets)?$'
   })
 })
 export const RouteAuthCallbackQuery = Object({
@@ -10,7 +10,7 @@ export const RouteAuthCallbackQuery = Object({
     minLength: 43
   }),
   state: String({
-    pattern: '^csrf=[a-zA-Z0-9]{64}&redirect_to=/(dashboard|tickets)$'
+    pattern: '^csrf=[a-zA-Z0-9]{64}&redirect_to=/(dashboard|tickets)?$'
   })
 })
 export const RouteForumsTopicsQuery = Object({

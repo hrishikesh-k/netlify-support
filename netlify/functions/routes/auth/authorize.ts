@@ -19,7 +19,7 @@ export default function (api : TFastifyTypebox) {
         timestamp: Date.now()
       })
     } catch (csrfErr) {
-      throw ApiError.internalServerError('failed to process CSRF token', csrfErr)
+      throw ApiError.internalServerError('failed to store CSRF token', csrfErr)
     }
     return res.redirect(`https://app.netlify.com/authorize?${stringify({
       client_id: env['NETLIFY_CLIENT_ID'],

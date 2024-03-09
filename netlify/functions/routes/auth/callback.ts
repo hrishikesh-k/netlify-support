@@ -34,8 +34,13 @@ export default function (api : TFastifyTypebox) {
       throw ApiError.internalServerError('failed to query csrf store', csrfBlobErr)
     }
     if (csrfBlob) {
-      console.log(csrfBlob)
-      if (csrfBlob.ip !== req.ip || csrfBlob.timestamp <= (Date.now() - (5 * 60 * 1000))) {
+      try {
+        await csrfStore.delete(parsedState.csrf)
+      } catch {
+        // no need to throw this error
+        // TODO: still log it maybe?
+      }
+      if (csrfBlob.ip !== req.ip || csrfBlob.timestamp < (Date.now() - (5 * 60 * 1000))) {
         throw ApiError.badRequest('csrf token IP or timestamp mismatch')
       }
     } else {
