@@ -1,6 +1,7 @@
 import ajvErrors from 'ajv-errors'
 import {ApiError, Logger} from '~/server/utils/functions.ts'
 import awsLambdaFastify from '@fastify/aws-lambda'
+import {connectLambda} from '@netlify/blobs'
 import {env} from 'node:process'
 import {expTime, logLevels} from '~/server/utils/constants.ts'
 import fastify, {type FastifyError} from 'fastify'
@@ -46,6 +47,7 @@ api.addHook('onRequest', (req, _res, done) => {
   if (logLevels.includes(logLevelHeader)) {
     req.log.level = logLevelHeader
   }
+  connectLambda(req.awsLambda.event)
   req.origin = new URL(req.awsLambda.event.rawUrl).origin
   req.wretchBase = wretch().addon(wretchAbort()).addon(wretchFormUrl).addon(wretchQueryString).signal(wretchSignal)
   req.wretchDiscourse = req.wretchBase.headers({

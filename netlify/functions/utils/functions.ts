@@ -14,6 +14,9 @@ export class ApiError extends Error {
       this.statusCode = 500
     }
   }
+  static badRequest(msg : string, err? : any) {
+    return new ApiError(msg, err, 400)
+  }
   static forbidden(msg : string, err? : any) {
     return new ApiError(msg, err, 403)
   }

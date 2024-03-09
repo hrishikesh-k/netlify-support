@@ -8,9 +8,6 @@
   const route = useRoute()
   const router = useRouter()
   onMounted(async () => {
-    if (route.query['csrf'] && route.query['csrf'] !== localStorage.getItem('nf_csrf') ) {
-      location.href = '/api/auth/logout'
-    }
     if (!route.meta.skipAuth) {
       redirect_to.value = {
         name: route.name,

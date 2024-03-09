@@ -7,6 +7,7 @@ import {RouteAuthCallbackQuery} from '~/types/request.ts'
 import {RouteAuthCallbackRes} from '~/types/response'
 import type {TFastifyTypebox, TJwtPayload} from '~/types/server.ts'
 import type {TNUser} from '~/types/global.ts'
+import {getStore} from "@netlify/blobs";
 export default function (api : TFastifyTypebox) {
   return api.get('/auth/callback', {
     schema: {
@@ -16,9 +17,30 @@ export default function (api : TFastifyTypebox) {
       }
     }
   }, async (req, res) => {
+    const csrfStore = getStore('csrf_store')
+    const parsedState = parse(req.query.state) as unknown as {
+      csrf : string
+      redirect_to : string
+    }
+    let csrfBlob
     let jwt
     let tokenRes
     let userRes
+    try {
+      csrfBlob = await csrfStore.get(parsedState.csrf, {
+        type: 'json'
+      })
+    } catch (csrfBlobErr) {
+      throw ApiError.internalServerError('failed to query csrf store', csrfBlobErr)
+    }
+    if (csrfBlob) {
+      console.log(csrfBlob)
+      if (csrfBlob.ip !== req.ip || csrfBlob.timestamp <= (Date.now() - (5 * 60 * 1000))) {
+        throw ApiError.badRequest('csrf token IP or timestamp mismatch')
+      }
+    } else {
+      throw ApiError.badRequest('invalid csrf token')
+    }
     try {
       tokenRes = await req.wretchBase.formUrl({
         client_id: env['NETLIFY_CLIENT_ID'],
@@ -38,10 +60,6 @@ export default function (api : TFastifyTypebox) {
       throw new ApiError('failed to fetch user details from Netlify', userErr)
     }
     try {
-      const parsedState = parse(req.query.state) as unknown as {
-        csrf : number
-        redirect_to : string
-      }
       jwt = await new EncryptJWT({
         email: userRes.email,
         nf_id: userRes.id,
@@ -52,7 +70,7 @@ export default function (api : TFastifyTypebox) {
         alg: 'dir',
         enc: 'A256CBC-HS512'
       }).encrypt(jwtSecret)
-      return res.setCookie('nf_token', jwt).redirect(`${req.origin}${parsedState.redirect_to}?csrf=${parsedState.csrf}`)
+      return res.setCookie('nf_token', jwt).redirect(`${req.origin}${parsedState.redirect_to}`)
     } catch (parseErr) {
       throw ApiError.internalServerError('failed to parse data', parseErr)
     }

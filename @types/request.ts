@@ -1,9 +1,5 @@
 import {Integer, Literal, Object, Optional, type Static, String, Union} from '@sinclair/typebox'
 export const RouteAuthAuthorizeQuery = Object({
-  csrf: Integer({
-    maximum: 99999,
-    minimum: 10000
-  }),
   redirect_to: String({
     pattern: '^/(dashboard|tickets)$'
   })
@@ -14,7 +10,7 @@ export const RouteAuthCallbackQuery = Object({
     minLength: 43
   }),
   state: String({
-    pattern: '^csrf=\\d{5}&redirect_to=/(dashboard|tickets)$'
+    pattern: '^csrf=[a-zA-Z0-9]{64}&redirect_to=/(dashboard|tickets)$'
   })
 })
 export const RouteForumsTopicsQuery = Object({
