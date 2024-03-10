@@ -4,9 +4,6 @@ import LBase from '~/client/layouts/l-base.vue'
 import {nfUser} from '~/client/utils/constants.ts'
 import primeVue from 'primevue/config'
 import 'virtual:uno.css'
-const app = createApp(LBase).use(primeVue, {
-  unstyled: true
-})
 const router = createRouter({
   history: createWebHistory(),
   routes: [{
@@ -40,6 +37,6 @@ const router = createRouter({
     path: '/login'
   }]
 })
-app.use(router)
-await router.isReady()
-app.mount('#n-wrapper')
+createApp(LBase).use(primeVue, {
+  unstyled: true
+}).use(router).mount('#n-wrapper')

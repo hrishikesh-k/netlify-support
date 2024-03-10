@@ -10,6 +10,7 @@
   const router = useRouter()
   const userLoadAttempted = ref<boolean>(false)
   onMounted(async () => {
+    await router.isReady()
     if (!route.meta.skipAuth) {
       redirectTo.value = {
         name: route.name,
