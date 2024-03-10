@@ -36,7 +36,7 @@
           </template>
         </PVButton>
       </a>
-      <p class="m-0 opacity-50 text-3.5">Please ensure you've signed into <a class="font-600 text-inherit" href="https://app.netlify.com/" target="_blank">app.netlify.com</a> before attempting to login.</p>
+      <p class="m-0 opacity-50 text-3.5">Please ensure you've signed into <a class="font-600 text-inherit" href="https://app.netlify.com/" rel="nofollow noopener noreferrer" target="_blank">app.netlify.com</a> before attempting to login.</p>
     </div>
   </div>
 </template>

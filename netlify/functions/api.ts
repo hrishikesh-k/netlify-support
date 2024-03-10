@@ -1,4 +1,3 @@
-import ajvErrors from 'ajv-errors'
 import {ApiError, Logger} from '~/server/utils/functions.ts'
 import awsLambdaFastify from '@fastify/aws-lambda'
 import {connectLambda} from '@netlify/blobs'
@@ -24,16 +23,6 @@ import wretchAbort from 'wretch/addons/abort'
 import wretchFormUrl from 'wretch/addons/formUrl'
 import wretchQueryString from 'wretch/addons/queryString'
 const api = fastify({
-  ajv: {
-    customOptions: {
-      allErrors: true,
-      coerceTypes: true,
-      removeAdditional: false
-    },
-    plugins: [
-      ajvErrors
-    ]
-  },
   disableRequestLogging: true,
   ignoreDuplicateSlashes: true,
   ignoreTrailingSlash: true,

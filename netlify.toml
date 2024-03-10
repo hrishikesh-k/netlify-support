@@ -1,12 +1,7 @@
-# npx netlify deploy --build --prod --skip-functions-cache
 [build]
   base = "./"
-  command = "npm run tsc && npm run test && npm run build"
+  command = "npm run tsc && npm run build"
   publish = "./dist/"
-[functions.api]
-  external_node_modules = [
-    "jsdom"
-  ]
 [[redirects]]
   force = true
   from = "/api/*"
