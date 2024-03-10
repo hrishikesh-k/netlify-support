@@ -1,7 +1,7 @@
 import {Integer, Literal, Object, Optional, type Static, String, Union} from '@sinclair/typebox'
 export const RouteAuthAuthorizeQuery = Object({
   redirect_to: String({
-    pattern: '/^(dashboard|tickets)?$'
+    pattern: '^/(dashboard|tickets)?$'
   })
 })
 export const RouteAuthCallbackQuery = Object({
