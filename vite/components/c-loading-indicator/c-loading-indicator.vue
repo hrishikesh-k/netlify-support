@@ -1,5 +1,15 @@
+<script setup lang="ts">
+  import type {CLoadingIndicatorProps} from '~/client/components/c-loading-indicator/c-loading-indicator.ts'
+  const props = withDefaults(defineProps<CLoadingIndicatorProps>(), {
+    size: 10
+  })
+</script>
 <template>
-  <svg class="fill-current h-full w-full" viewBox="0 0 128 128">
+  <svg
+    class="fill-current"
+    v-bind:height="props.size * 4"
+    v-bind:width="props.size * 4"
+    viewBox="0 0 128 128">
     <mask id="c-loading-mask">
       <path class="fill-neutral-000" d="M0,0v128h128V0H0z M81.2,82.3H46.8V45.7h34.4V82.3z"/>
     </mask>
@@ -29,7 +39,8 @@
     }
   }
   @keyframes c-loading-line-2 {
-    0%, 70% {
+    0%,
+    70% {
       transform: translateX(0);
     }
     100% {
@@ -37,11 +48,13 @@
     }
   }
   @keyframes c-loading-line-3 {
-    0%, 12% {
+    0%,
+    12% {
       opacity: 0;
       transform: translateY(0.25rem);
     }
-    40%, 60% {
+    40%,
+    60% {
       opacity: 1;
       transform: translateY(0);
     }
@@ -50,11 +63,13 @@
     }
   }
   @keyframes c-loading-line-4 {
-    0%, 9% {
+    0%,
+    9% {
       opacity: 0;
       transform: translate(-0.25rem, 0.25rem);
     }
-    40%, 63% {
+    40%,
+    63% {
       opacity: 1;
       transform: translate(0);
     }
@@ -63,11 +78,13 @@
     }
   }
   @keyframes c-loading-line-5 {
-    0%, 6% {
+    0%,
+    6% {
       opacity: 0;
       transform: translateX(-0.25rem);
     }
-    40%, 63% {
+    40%,
+    63% {
       opacity: 1;
       transform: translate(0);
     }
@@ -76,11 +93,13 @@
     }
   }
   @keyframes c-loading-line-6 {
-    0%, 3% {
+    0%,
+    3% {
       opacity: 0;
       transform: translate(-0.25rem, -0.25rem);
     }
-    40%, 63% {
+    40%,
+    63% {
       opacity: 1;
       transform: translate(0);
     }
@@ -89,7 +108,8 @@
     }
   }
   @keyframes c-loading-n {
-    0%, 65% {
+    0%,
+    65% {
       transform: scale(1);
     }
     80% {
