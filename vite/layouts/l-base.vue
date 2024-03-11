@@ -1,19 +1,39 @@
 <script setup lang="ts">
   import CLoadingIndicator from '~/client/components/c-loading-indicator/c-loading-indicator.vue'
-  import {componentLoading, redirectTo} from '~/client/utils/constants.ts'
-  import {onMounted, ref} from 'vue'
+  import {componentLoading, nfUser, redirectTo, wretchBase} from '~/client/utils/constants.ts'
+  import {computed, onMounted, ref} from 'vue'
   import PVProgressBar from 'primevue/progressbar'
   import {useDark} from '@vueuse/core'
   import {useRoute, useRouter} from 'vue-router'
+  import type {TRouteUserInfoRes} from '~/types/response.ts'
+  import {WretchError} from 'wretch/resolver'
   const route = useRoute()
   const router = useRouter()
   const routerReady = ref<boolean>(false)
+  const showRouterView = computed<boolean>(() => {
+    return routerReady.value && (nfUser.value !== null || route.path === '/login')
+  })
   onMounted(async () => {
     await router.isReady()
     routerReady.value = true
     redirectTo.value = {
       name: route.name,
       path: route.path
+    }
+    try {
+      const userRes = await wretchBase.get('/user/info').json<TRouteUserInfoRes>()
+      nfUser.value = userRes.nf
+      if (redirectTo.value && redirectTo.value.path !== '/' && router.hasRoute(redirectTo.value.name || '')) {
+        await router.replace(redirectTo.value.path)
+      } else {
+        await router.replace('/dashboard')
+      }
+    } catch (userErr) {
+      if (userErr instanceof WretchError && (userErr.status === 401 || userErr.status === 403)) {
+        await router.replace('/login')
+      } else {
+        // TODO: handle error
+      }
     }
   })
   useDark({
@@ -28,7 +48,7 @@
       value: 'after-animate-delay-1250 after:animate-duration-2000 before:animate-duration-2000 after:animate-iteration-count-infinite before:animate-iteration-count-infinite after:animate-name-pv-progress-bar-indeterminate-value-after before:animate-name-pv-progress-bar-indeterminate-value-before dark:after:bg-teal-400 dark:before:bg-teal-400 after:content-empty before:content-empty h-1 after:h-1 before:h-1 after:left-0 before:left-0 after:pos-absolute before:pos-absolute after:top-0 before:top-0'
     }"
     v-if="componentLoading"/>
-  <RouterView v-if="routerReady"/>
+  <RouterView v-if="showRouterView"/>
   <div class="flex h-full items-center justify-center w-full" v-else>
     <CLoadingIndicator v-bind:size="50"/>
   </div>

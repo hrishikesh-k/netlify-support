@@ -5,7 +5,7 @@
   import {stringify} from 'qs'
   const loginUrl = computed(() => {
     let redirectPath = '/'
-    if (redirectTo.value) {
+    if (redirectTo.value && redirectTo.value.path !== '/login') {
       redirectPath = redirectTo.value.path
     }
     return `/api/auth/authorize${stringify({

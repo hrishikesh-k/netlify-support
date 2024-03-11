@@ -13,18 +13,24 @@ const router = createRouter({
       },
       name: 'p-dashboard',
       path: '/dashboard'
+    }, {
+      component: () => {
+        return import('~/client/pages/p-login.vue')
+      },
+      name: 'p-login',
+      path: '/login'
+    }, {
+      component: () => {
+        return import('~/client/pages/p-tickets.vue')
+      },
+      name: 'p-tickets',
+      path: '/tickets'
     }],
     component: () => {
       return import('~/client/pages/p-index.vue')
     },
     name: 'p-index',
     path: '/'
-  }, {
-    component: () => {
-      return import('~/client/pages/p-login.vue')
-    },
-    name: 'p-login',
-    path: '/login'
   }]
 })
 router.beforeEach(to => {

@@ -10,10 +10,14 @@
   import PVProgressSpinner from 'primevue/progressspinner'
   import {useRoute} from 'vue-router'
   const breadcrumbItems = computed<BreadcrumbProps['model']>(() => {
-    if (route.name === '/') {
-      // TODO: dynamically generate breadcrumbs
+    const breadcrumbsArray = []
+    if (route.name === 'p-tickets') {
+      breadcrumbsArray.push({
+        label: 'Tickets',
+        route: '/tickets'
+      })
     }
-    return []
+    return breadcrumbsArray
   })
   const route = useRoute()
   const userMenuElement = ref<null | PVMenu>(null)
@@ -31,15 +35,19 @@
       }"
       v-bind:model="breadcrumbItems"
       v-bind:pt="{
-        menu: 'list-none m-0 p-0'
+        menu: 'flex gap-x-2 items-center list-none m-0 p-0'
       }">
       <template v-slot:item="pvBreadcrumbItem">
-        <RouterLink class="dark:hover:bg-teal-900 block border-rounded-1.5 box-border p-1" to="/dashboard" v-if="pvBreadcrumbItem.item.route">
+        <RouterLink class="dark:hover:bg-teal-900 block border-rounded-1.5 box-border p-1" to="/dashboard" v-if="pvBreadcrumbItem.item.route === '/dashboard'">
           <svg class="block h-8 w-8" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
             <path class="fill-teal-800 dark:fill-neutral-000 dark-group-hover:fill-teal-800 group-hover:fill-neutral-000 transition-duration-250" d="m30.17,30.86h-3.29l-.27-.27v-7.7c0-1.37-.54-2.43-2.19-2.47-.85-.02-1.82,0-2.86.04l-.16.16v9.97l-.27.27h-3.29l-.27-.27v-13.16l.27-.27h7.41c2.88,0,5.21,2.33,5.21,5.21v8.23l-.27.27Z"/>
             <path class="fill-teal-400 dark:fill-teal-200 dark:group-hover:fill-teal-400 group-hover:fill-teal-200 transition-duration-250" d="m21.97,46.78v-10.93l.29-.29h3.48l.29.29v10.93l-.29.29h-3.48l-.29-.29Zm0-34.63V1.22l.29-.29h3.48l.29.29v10.93l-.29.29h-3.48l-.29-.29Zm-9.19,26.53h-.48l-2.39-2.39v-.48l3.18-3.19h2.53s.34.34.34.34v2.53l-3.18,3.19Zm-2.87-26.37v-.48l2.39-2.39h.48l3.19,3.19v2.53l-.34.34h-2.53l-3.19-3.19ZM.29,21.97h12.3l.29.29v3.48l-.29.29H.29L0,25.74v-3.48l.29-.29Zm47.42,4.07h-12.3l-.29-.29v-3.48l.29-.29h12.3l.29.29v3.48l-.29.29Z"/>
           </svg>
         </RouterLink>
+        <RouterLink class="dark:hover:bg-teal-900 block border-rounded-1.5 decoration-none font-600 p-2 text-inherit dark:hover:text-teal-100" v-bind:to="pvBreadcrumbItem.item.route" v-else>{{pvBreadcrumbItem.label}}</RouterLink>
+      </template>
+      <template v-slot:separator>
+        <span class="font-200 text-neutral-dark-300 text-5">/</span>
       </template>
     </PVBreadcrumb>
     <template v-if="nfUser">
