@@ -58,6 +58,9 @@ export interface TNUser {
   support_priority : number
 }
 export interface TSStatus {
+  page : {
+    url : string
+  }
   status : {
     description : typeof sStatusDescription[number]
     indicator : typeof sStatusIndicator[number]

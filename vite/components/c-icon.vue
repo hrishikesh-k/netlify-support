@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {cIcons, type CIconProps} from '~/client/components/c-icon/c-icon.ts'
+  import {cIcons, type CIconProps} from '~/types/props.ts'
   const props = withDefaults(defineProps<CIconProps>(), {
     size: 4
   })

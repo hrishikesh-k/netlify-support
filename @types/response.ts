@@ -17,21 +17,28 @@ export const RouteForumsTopicsRes = Array(Object({
   maxItems: 15
 })
 export const RouteSystemStatusRes = Object({
-  description: Union([
-    Literal('All Systems Operational'),
-    Literal('Major System Outage'),
-    Literal('Minor Service Outage'),
-    Literal('Partial System Outage'),
-    Literal('Partially Degraded Service'),
-    Literal('Service Under Maintenance')
-  ]),
-  indicator: Union([
-    Literal('critical'),
-    Literal('maintenance'),
-    Literal('major'),
-    Literal('minor'),
-    Literal('none')
-  ])
+  page: Object({
+    url: String({
+      format: 'uri'
+    })
+  }),
+  status: Object({
+    description: Union([
+      Literal('All Systems Operational'),
+      Literal('Major System Outage'),
+      Literal('Minor Service Outage'),
+      Literal('Partial System Outage'),
+      Literal('Partially Degraded Service'),
+      Literal('Service Under Maintenance')
+    ]),
+    indicator: Union([
+      Literal('critical'),
+      Literal('maintenance'),
+      Literal('major'),
+      Literal('minor'),
+      Literal('none')
+    ])
+  })
 })
 export const RouteTicketCommentsRes = Object({
   comments: Object({}),
@@ -60,4 +67,5 @@ export const RouteUserInfoRes = Object({
   }),
   zd: typeboxZdUser
 })
+export type TRouteSystemStatusRes = Static<typeof RouteSystemStatusRes>
 export type TRouteUserInfoRes = Static<typeof RouteUserInfoRes>

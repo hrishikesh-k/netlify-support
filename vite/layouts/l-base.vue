@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import CLoadingIndicator from '~/client/components/c-loading-indicator/c-loading-indicator.vue'
+  import CLoadingIndicator from '~/client/components/c-loading-indicator.vue'
   import {componentLoading, nfUser, redirectTo, wretchBase} from '~/client/utils/constants.ts'
   import {computed, onMounted, ref} from 'vue'
   import PVProgressBar from 'primevue/progressbar'
@@ -49,7 +49,7 @@
     }"
     v-if="componentLoading"/>
   <RouterView v-if="showRouterView"/>
-  <div class="flex h-full items-center justify-center w-full" v-else>
+  <div class="flex flex-col h-full items-center justify-center w-full" v-else>
     <CLoadingIndicator v-bind:size="50"/>
   </div>
 </template>

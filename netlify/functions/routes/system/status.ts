@@ -16,6 +16,6 @@ export default function (api : TFastifyTypebox) {
     } catch (statusErr) {
       throw new ApiError('failed to fetch data from Statuspage', statusErr)
     }
-    return res.send(statusRes.status)
+    return res.send(statusRes)
   })
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type {CLoadingIndicatorProps} from '~/client/components/c-loading-indicator/c-loading-indicator.ts'
+  import type {CLoadingIndicatorProps} from '~/types/props.ts'
   const props = withDefaults(defineProps<CLoadingIndicatorProps>(), {
     size: 10
   })
