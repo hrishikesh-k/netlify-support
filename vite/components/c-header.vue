@@ -12,9 +12,8 @@
   import PVToolbar, {type ToolbarProps} from 'primevue/toolbar'
   import type {TRouteSystemStatusRes} from '~/types/response.ts'
   import type {TSStatus} from '~/types/global.ts'
-  import {useRoute} from 'vue-router'
+  import {type RouteLocationNormalizedLoaded, type RouteRecordNormalized, useRoute, useRouter} from 'vue-router'
   import {useTimeoutPoll} from '@vueuse/core'
-
   interface SystemStatusIndicator {
     component : {
       name : 'a' | 'div' | typeof PVButton
@@ -26,7 +25,7 @@
       })
     }
     icon : CIconProps
-    label : 'Loading...' | 'Retry' | TSStatus['status']['description'],
+    label : 'Loading...' | 'Retry' | TSStatus['status']['description']
     props : {
       pt : {
         root : InlineMessagePassThroughOptions['root']
@@ -42,15 +41,38 @@
     }
   }
   const pvBreadcrumbProps = computed<BreadcrumbProps>(() => {
-    const pvBreadcrumbItems : BreadcrumbProps['model'] = [{
-      label: 'Dashboard',
-      route: '/dashboard'
-    }]
-    if (route.path.startsWith('/tickets')) {
-      pvBreadcrumbItems.push({
-        label: 'Tickets',
-        route: '/tickets'
+    const currentBreadcrumbLevelMinusOne = route.meta.breadcrumb.level -1
+    const pvBreadcrumbItems : BreadcrumbProps['model'] = []
+    function formatLabel(route : RouteLocationNormalizedLoaded | RouteRecordNormalized) {
+      const label = route.meta.breadcrumb.label
+      const labelRegex = /[[a-z.]*]/
+      const labelSquareBrackets = label.match(labelRegex)
+      if (labelSquareBrackets) {
+       return label.replace(labelRegex, labelSquareBrackets[0].replaceAll(/[\[\]]/g, '').split('.').reduce((prev, curr) => {
+         if (prev) {
+           return prev[curr]
+         } else {
+           return null
+         }
+       }, route as any))
+      } else {
+        return label
+      }
+    }
+    pvBreadcrumbItems[currentBreadcrumbLevelMinusOne] = {
+      label: formatLabel(route),
+      route: route.path
+    }
+    for (let i = currentBreadcrumbLevelMinusOne; i > 0; i--) {
+      const parent = router.getRoutes().find(routeToCheck => {
+        return routeToCheck.name === route.meta.breadcrumb.parent
       })
+      if (parent) {
+        pvBreadcrumbItems[i - 1] = {
+          label: formatLabel(parent),
+          route: parent.path
+        }
+      }
     }
     return {
       home: {
@@ -110,6 +132,7 @@
     }
   }
   const route = useRoute()
+  const router = useRouter()
   const systemStatus = ref<'error' | null | TSStatus>(null)
   const systemStatusIndicator = computed<SystemStatusIndicator>(() => {
     const pt : SystemStatusIndicator['props']['pt'] = {

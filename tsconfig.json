@@ -41,8 +41,6 @@
     "./netlify/functions/**/*.ts",
     "./vite/**/*.ts",
     "./vite/**/*.vue",
-    "./histoire.config.ts",
-    "./histoire.setup.ts",
     "./uno.config.ts",
     "./vite.config.ts"
   ]
