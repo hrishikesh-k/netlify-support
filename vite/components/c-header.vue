@@ -2,27 +2,30 @@
   import CIcon from '~/client/components/c-icon.vue'
   import type {CIconProps} from '~/types/props.ts'
   import {computed, type LinkHTMLAttributes, onMounted, ref} from 'vue'
+  import CProgressSpinner from '~/client/components/c-progress-spinner.vue'
   import {nfUser, wretchBase} from '~/client/utils/constants.ts'
   import PVAvatar, {type AvatarProps} from 'primevue/avatar'
   import PVBreadcrumb, {type BreadcrumbProps} from 'primevue/breadcrumb'
   import PVButton, {type ButtonProps} from 'primevue/button'
   import PVInlineMessage, {type InlineMessagePassThroughOptions, type InlineMessageProps} from 'primevue/inlinemessage'
   import PVMenu, {type MenuProps} from 'primevue/menu'
-  import PVProgressSpinner, {type ProgressSpinnerProps} from 'primevue/progressspinner'
   import PVToolbar, {type ToolbarProps} from 'primevue/toolbar'
   import type {TRouteSystemStatusRes} from '~/types/response.ts'
   import type {TSStatus} from '~/types/global.ts'
   import {useRoute} from 'vue-router'
+  import {useTimeoutPoll} from '@vueuse/core'
+
   interface SystemStatusIndicator {
     component : {
       name : 'a' | 'div' | typeof PVButton
       on? : {
         click? : () => void
       }
-      props? : ButtonProps | LinkHTMLAttributes & {
+      props? : ButtonProps | (LinkHTMLAttributes & {
         target : '_blank'
-      }
+      })
     }
+    icon : CIconProps
     label : 'Loading...' | 'Retry' | TSStatus['status']['description'],
     props : {
       pt : {
@@ -100,19 +103,6 @@
       start: 'box-border p-x-4 p-y-2'
     }
   }
-  const pvProgressSpinnerProps : ProgressSpinnerProps = {
-    pt: {
-      circle: {
-        class: 'animate-duration-1500 animate-iteration-count-infinite animate-name-pv-progress-spinner-dash dark:stroke-teal-400',
-        style: {
-          'stroke-dasharray': '89, 200',
-          'stroke-dashoffset': '0'
-        }
-      },
-      root: 'h-10 w-10',
-      spinner: 'animate-spin'
-    }
-  }
   const pvToolbarProps : ToolbarProps = {
     pt: {
       end: 'flex gap-x-3 items-center',
@@ -128,21 +118,22 @@
     let componentName : SystemStatusIndicator['component']['name'] = 'div'
     let componentOn : SystemStatusIndicator['component']['on'] = {}
     let componentProps : SystemStatusIndicator['component']['props'] = {}
+    let iconName : CIconProps['name'] = 'circle'
+    let iconSize : CIconProps['size'] = 2
     let label : SystemStatusIndicator['label'] = 'Loading...'
     let severity : SystemStatusIndicator['props']['severity'] = 'secondary'
     if (systemStatus.value === 'error') {
       componentName = PVButton
       componentOn = {
-        click: () => {
-          console.log('clicked')
-          // TODO re-fetch status
-        }
+        click: fetchSystemStatus
       }
       componentProps = {
         pt: {
           root: 'bg-transparent border-0 cursor-pointer p-0 text-inherit'
         }
       }
+      iconName = 'rotate-right'
+      iconSize = 3
       label = 'Retry'
       pt.root += 'dark:bg-purple-900 dark:hover:bg-purple-800 dark:border-purple-500 dark:text-purple-200'
     } else if (systemStatus.value) {
@@ -153,6 +144,8 @@
         rel: 'nofollow noopener noreferrer',
         target: '_blank'
       }
+      iconName = 'circle'
+      iconSize = 2
       label = systemStatus.value.status.description
       switch (systemStatus.value.status.indicator) {
         case 'critical':
@@ -182,6 +175,10 @@
         on: componentOn,
         props: componentProps
       },
+      icon: {
+        name: iconName,
+        size: iconSize
+      },
       label,
       props: {
         pt,
@@ -190,19 +187,23 @@
     }
   })
   const userMenuElement = ref<null | PVMenu>(null)
-  function userMenuToggle(event : Event) {
-    if (userMenuElement.value) {
-      userMenuElement.value.toggle(event)
-    }
-  }
-  onMounted(async () => {
+  async function fetchSystemStatus() {
     try {
       systemStatus.value = await wretchBase.get('/system/status').json<TRouteSystemStatusRes>()
     } catch {
       // TODO: handle error
       systemStatus.value = 'error'
     }
+  }
+  function userMenuToggle(event : Event) {
+    if (userMenuElement.value) {
+      userMenuElement.value.toggle(event)
+    }
+  }
+  onMounted(async () => {
+    await fetchSystemStatus()
   })
+  useTimeoutPoll(fetchSystemStatus, 5 * 60 * 1000)
 </script>
 <template>
   <header class="dark:bg-neutral-dark-800 border-rounded-2 box-border p-3 w-full">
@@ -227,7 +228,8 @@
         <component v-bind="systemStatusIndicator.component.props" v-bind:is="systemStatusIndicator.component.name" v-on="systemStatusIndicator.component.on">
           <PVInlineMessage v-bind="systemStatusIndicator.props">
             <template v-slot:icon>
-              <CIcon class="flex-shrink-0" name="circle" v-bind:size="2"/>
+              <CIcon class="flex-shrink-0" v-bind="systemStatusIndicator.icon" v-if="systemStatus"/>
+              <CProgressSpinner v-bind:size="3" v-else/>
             </template>
             <span>{{systemStatusIndicator.label}}</span>
           </PVInlineMessage>
@@ -259,24 +261,8 @@
             </template>
           </PVMenu>
         </template>
-        <PVProgressSpinner v-bind="pvProgressSpinnerProps" v-else/>
+        <CProgressSpinner class="dark:text-teal-400" v-bind:size="10" v-else/>
       </template>
     </PVToolbar>
   </header>
 </template>
-<style>
-  @keyframes pv-progress-spinner-dash {
-    0% {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 89, 200;
-      stroke-dashoffset: -35px;
-    }
-    100% {
-      stroke-dasharray: 89, 200;
-      stroke-dashoffset: -124px;
-    }
-  }
-</style>
