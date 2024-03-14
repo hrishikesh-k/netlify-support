@@ -105,7 +105,7 @@
     }, {
       icon: 'plus',
       label: 'New ticket',
-      route: '/tickets'
+      route: '/tickets/new'
     }, {
       icon: 'messages',
       label: 'My tickets',
