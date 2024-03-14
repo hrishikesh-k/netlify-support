@@ -40,6 +40,19 @@ const router = createRouter({
         },
         meta: {
           breadcrumb: {
+            label: 'New',
+            level: 2,
+            parent: 'p-tickets'
+          }
+        },
+        name: 'p-tickets-new',
+        path: '/tickets/new'
+      }, {
+        component: () => {
+          return import('~/client/pages/p-tickets.vue')
+        },
+        meta: {
+          breadcrumb: {
             label: '#[params.id]',
             level: 2,
             parent: 'p-tickets'

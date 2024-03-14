@@ -48,13 +48,15 @@
       const labelRegex = /[[a-z.]*]/
       const labelSquareBrackets = label.match(labelRegex)
       if (labelSquareBrackets) {
+        // @ts-ignore
        return label.replace(labelRegex, labelSquareBrackets[0].replaceAll(/[\[\]]/g, '').split('.').reduce((prev, curr) => {
          if (prev) {
+           // @ts-ignore
            return prev[curr]
          } else {
            return null
          }
-       }, route as any))
+       }, route))
       } else {
         return label
       }
@@ -101,7 +103,7 @@
     model: [{
       separator: true
     }, {
-      icon: 'message-plus',
+      icon: 'plus',
       label: 'New ticket',
       route: '/tickets'
     }, {
@@ -229,7 +231,7 @@
   useTimeoutPoll(fetchSystemStatus, 5 * 60 * 1000)
 </script>
 <template>
-  <header class="dark:bg-neutral-dark-800 border-rounded-2 box-border p-3 w-full">
+  <header class="dark:bg-neutral-dark-800 border-1 border-rounded-2 border-solid dark:border-neutral-dark-700 box-border m-b-6 p-3 w-full">
     <PVToolbar v-bind="pvToolbarProps">
       <template v-slot:start>
         <PVBreadcrumb v-bind="pvBreadcrumbProps">
