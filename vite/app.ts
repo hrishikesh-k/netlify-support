@@ -3,6 +3,7 @@ import {createApp} from 'vue'
 import {createRouter, createWebHistory} from 'vue-router'
 import LBase from '~/client/layouts/l-base.vue'
 import primeVue from 'primevue/config'
+import PVTooltip from 'primevue/tooltip'
 import 'virtual:uno.css'
 const router = createRouter({
   history: createWebHistory(),
@@ -20,19 +21,6 @@ const router = createRouter({
       },
       name: 'p-dashboard',
       path: '/dashboard'
-    }, {
-      component: () => {
-        return import('~/client/pages/p-login.vue')
-      },
-      meta: {
-        breadcrumb: {
-          label: 'Login',
-          level: 1,
-          parent: 'p-index'
-        }
-      },
-      name: 'p-login',
-      path: '/login'
     }, {
       children: [{
         component: () => {
@@ -86,6 +74,12 @@ const router = createRouter({
     },
     name: 'p-index',
     path: '/'
+  }, {
+    component: () => {
+      return import('~/client/pages/p-login.vue')
+    },
+    name: 'p-login',
+    path: '/login'
   }]
 })
 router.beforeEach(to => {
@@ -96,6 +90,6 @@ router.beforeEach(to => {
 router.beforeResolve(() => {
   componentLoading.value = false
 })
-createApp(LBase).use(primeVue, {
+createApp(LBase).directive('pv-tooltip', PVTooltip).use(primeVue, {
   unstyled: true
 }).use(router).mount('#n-wrapper')

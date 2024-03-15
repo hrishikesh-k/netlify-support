@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import CIcon from '~/client/components/c-icon.vue'
   import type {CIconProps} from '~/types/props.ts'
-  import {computed, type LinkHTMLAttributes, onMounted, ref} from 'vue'
+  import {computed, type LinkHTMLAttributes, ref} from 'vue'
   import CProgressSpinner from '~/client/components/c-progress-spinner.vue'
   import {nfUser, wretchBase} from '~/client/utils/constants.ts'
   import PVAvatar, {type AvatarProps} from 'primevue/avatar'
@@ -29,6 +29,7 @@
     props : {
       pt : {
         root : InlineMessagePassThroughOptions['root']
+        text : InlineMessagePassThroughOptions['text']
       },
       severity : InlineMessageProps['severity']
     }
@@ -138,7 +139,8 @@
   const systemStatus = ref<'error' | null | TSStatus>(null)
   const systemStatusIndicator = computed<SystemStatusIndicator>(() => {
     const pt : SystemStatusIndicator['props']['pt'] = {
-      root: 'border-1 border-rounded-1.5 border-solid box-border flex gap-x-1 items-center lt-sm:max-w-30 p-x-2 p-y-1 text-3 transition-duration-250 '
+      root: 'border-1 border-rounded-1.5 border-solid box-border flex gap-x-1 items-center lt-sm:max-w-30 p-x-2 p-y-1 text-3 transition-duration-250 ',
+      text: 'text-truncate'
     }
     let componentName : SystemStatusIndicator['component']['name'] = 'div'
     let componentOn : SystemStatusIndicator['component']['on'] = {}
@@ -214,6 +216,7 @@
   const userMenuElement = ref<null | PVMenu>(null)
   async function fetchSystemStatus() {
     try {
+      systemStatus.value = null
       systemStatus.value = await wretchBase.get('/system/status').json<TRouteSystemStatusRes>()
     } catch {
       // TODO: handle error
@@ -225,10 +228,9 @@
       userMenuElement.value.toggle(event)
     }
   }
-  onMounted(async () => {
-    await fetchSystemStatus()
+  useTimeoutPoll(fetchSystemStatus, 5 * 60 * 1000, {
+    immediate: true
   })
-  useTimeoutPoll(fetchSystemStatus, 5 * 60 * 1000)
 </script>
 <template>
   <header class="dark:bg-neutral-dark-800 border-1 border-rounded-2 border-solid dark:border-neutral-dark-700 box-border m-b-6 p-3 w-full">
@@ -255,9 +257,7 @@
             <template v-slot:icon>
               <CIcon class="flex-shrink-0" v-bind="systemStatusIndicator.icon" v-if="systemStatus"/>
               <CProgressSpinner v-bind:size="3" v-else/>
-            </template>
-            <span>{{systemStatusIndicator.label}}</span>
-          </PVInlineMessage>
+            </template>{{systemStatusIndicator.label}}</PVInlineMessage>
         </component>
         <template v-if="nfUser">
           <PVButton v-bind="pvButtonAvatarProps" v-on:click="userMenuToggle">

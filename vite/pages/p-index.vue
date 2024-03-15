@@ -14,8 +14,7 @@
   })
 </script>
 <template>
-  <RouterView v-if="route.path === '/login'"/>
-  <div class="box-border m-x-auto max-w-350 p-6 w-full" v-else>
+  <div class="box-border m-x-auto max-w-350 p-6 w-full">
     <CHeader/>
     <RouterView/>
   </div>

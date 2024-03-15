@@ -52,7 +52,7 @@
   <div class="flex flex-col h-full">
     <RouterView v-if="showRouterView"/>
     <div class="flex flex-1 h-full items-center justify-center w-full" v-else>
-      <CLoadingIndicator v-bind:size="50"/>
+      <CLoadingIndicator v-bind:size="35"/>
     </div>
     <CFooter/>
   </div>
