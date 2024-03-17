@@ -1,6 +1,6 @@
 import {ApiError} from '~/server/utils/functions.ts'
 import {RouteTicketsListQuery} from '~/types/request.ts'
-import {RouteTicketListRes} from '~/types/response.ts'
+import {routeTicketListRes} from '~/types/response.ts'
 import type {TFastifyTypebox} from '~/types/server.ts'
 import type {TZTickets} from "~/types/global.ts";
 export default function (api: TFastifyTypebox) {
@@ -8,7 +8,7 @@ export default function (api: TFastifyTypebox) {
     schema: {
       querystring: RouteTicketsListQuery,
       response: {
-        200: RouteTicketListRes
+        200: routeTicketListRes
       }
     }
   }, async (req, res) => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {computed} from 'vue'
   import {redirectTo} from '~/client/utils/constants.ts'
-  import PVButton from 'primevue/button'
+  import PVButton, {type ButtonProps} from 'primevue/button'
   import {stringify} from 'qs'
   const loginUrl = computed(() => {
     let redirectPath = '/'
@@ -14,6 +14,12 @@
       addQueryPrefix: true
     })}`
   })
+  const pvButtonProps : ButtonProps = {
+    label: 'Login with Netlify',
+    pt: {
+      root: 'bg-transparent dark:hover:bg-neutral-000 hover:bg-neutral-light-800 border-1 border-neutral-light-800 border-rounded-1.5 border-solid dark:border-neutral-000 cursor-pointer flex font-600 font-inherit gap-x-4 group items-center max-w-full p-x-10 p-y-3 text-4.5 text-inherit dark:hover:text-neutral-light-800 hover:text-neutral-000 transition-duration-250 w-90'
+    }
+  }
 </script>
 <template>
   <div class="box-border flex flex-col h-full m-x-auto lg:max-w-200 sm:max-w-148 xl:max-w-250 p-6 p-b-0 sm:p-x-0 sm:p-t-6 w-full">
@@ -23,11 +29,7 @@
     </svg>
     <div class="flex flex-1 flex-col gap-6 items-center justify-center w-full">
       <a class="decoration-none max-w-full text-inherit" v-bind:href="loginUrl">
-        <PVButton
-          label="Login with Netlify"
-          v-bind:pt="{
-            root: 'bg-transparent dark:hover:bg-neutral-000 hover:bg-neutral-light-800 border-1 border-neutral-light-800 border-rounded-1.5 border-solid dark:border-neutral-000 cursor-pointer flex font-600 font-mulish gap-x-4 group items-center max-w-full p-x-10 p-y-3 text-4.5 text-inherit dark:hover:text-neutral-light-800 hover:text-neutral-000 transition-duration-250 w-90'
-          }">
+        <PVButton v-bind="pvButtonProps">
           <template v-slot:icon>
             <svg class="h-8 w-8" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
               <path class="fill-teal-800 dark:fill-neutral-000 dark-group-hover:fill-teal-800 group-hover:fill-neutral-000 transition-duration-250" d="m30.17,30.86h-3.29l-.27-.27v-7.7c0-1.37-.54-2.43-2.19-2.47-.85-.02-1.82,0-2.86.04l-.16.16v9.97l-.27.27h-3.29l-.27-.27v-13.16l.27-.27h7.41c2.88,0,5.21,2.33,5.21,5.21v8.23l-.27.27Z"/>

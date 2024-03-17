@@ -2,7 +2,7 @@ import {ApiError} from '~/server/utils/functions.ts'
 import {jwtDecrypt} from 'jose'
 import {jwtSecret} from '~/server/utils/constants.ts'
 import {RouteTicketCommentsParams} from '~/types/request.ts'
-import {RouteTicketCommentsRes} from '~/types/response.ts'
+import {routeTicketCommentsRes} from '~/types/response.ts'
 import type {TFastifyTypebox, TTicketTokenJwtPayload} from '~/types/server.ts'
 import type {TZComments} from '~/types/global.ts'
 export default function (api : TFastifyTypebox) {
@@ -10,7 +10,7 @@ export default function (api : TFastifyTypebox) {
     schema: {
       params: RouteTicketCommentsParams,
       response: {
-        200: RouteTicketCommentsRes
+        200: routeTicketCommentsRes
       }
     }
   }, async (req, res) => {

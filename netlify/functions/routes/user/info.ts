@@ -1,7 +1,7 @@
 import {ApiError} from '~/server/utils/functions.ts'
 import {EncryptJWT} from 'jose'
 import {expTime, jwtSecret} from '~/server/utils/constants.ts'
-import {RouteUserInfoRes} from '~/types/response.ts'
+import {routeUserInfoRes} from '~/types/response.ts'
 import type {TFastifyTypebox} from '~/types/server.ts'
 import type {TNAccount, TNUser, TZUser, TZUsers} from '~/types/global.ts'
 import type {TJwtPayload} from '~/types/server.ts'
@@ -9,7 +9,7 @@ export default function (api : TFastifyTypebox) {
   return api.get('/user/info', {
     schema: {
       response: {
-        200: RouteUserInfoRes
+        200: routeUserInfoRes
       }
     }
   }, async (req, res) => {

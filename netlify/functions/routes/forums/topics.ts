@@ -1,6 +1,6 @@
 import {ApiError} from '~/server/utils/functions.ts'
 import {RouteForumsTopicsQuery} from '~/types/request.ts'
-import {RouteForumsTopicsRes} from '~/types/response.ts'
+import {routeForumsTopicsRes} from '~/types/response.ts'
 import type {TFastifyTypebox} from '~/types/server.ts'
 import type {TDTopics} from '~/types/global.ts'
 export default function (api : TFastifyTypebox) {
@@ -8,7 +8,7 @@ export default function (api : TFastifyTypebox) {
     schema: {
       querystring: RouteForumsTopicsQuery,
       response: {
-        200: RouteForumsTopicsRes
+        200: routeForumsTopicsRes
       }
     }
   }, async (req, res) => {
@@ -31,6 +31,7 @@ export default function (api : TFastifyTypebox) {
       return topic.category_id === 48
     }).map(filteredTopic => {
       return {
+        category_id: filteredTopic.category_id,
         has_accepted_answer: filteredTopic.has_accepted_answer,
         id: filteredTopic.id,
         reply_count: filteredTopic.reply_count,

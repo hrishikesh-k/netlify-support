@@ -1,12 +1,12 @@
 import {ApiError} from '~/server/utils/functions.ts'
-import {RouteSystemStatusRes} from '~/types/response.ts'
+import {routeSystemStatusRes} from '~/types/response.ts'
 import type {TFastifyTypebox} from '~/types/server.ts'
 import type {TSStatus} from '~/types/global.ts'
 export default function (api : TFastifyTypebox) {
   return api.get('/system/status', {
     schema: {
       response: {
-        200: RouteSystemStatusRes
+        200: routeSystemStatusRes
       }
     }
   }, async (req, res) => {

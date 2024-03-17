@@ -3,7 +3,6 @@ import {createApp} from 'vue'
 import {createRouter, createWebHistory} from 'vue-router'
 import LBase from '~/client/layouts/l-base.vue'
 import primeVue from 'primevue/config'
-import PVTooltip from 'primevue/tooltip'
 import 'virtual:uno.css'
 const router = createRouter({
   history: createWebHistory(),
@@ -83,13 +82,15 @@ const router = createRouter({
   }]
 })
 router.beforeEach(to => {
-  if (to.matched[0] && to.matched[0].components && typeof to.matched[0].components.default === 'function') {
+  if (to.matched.some(matchedTo => {
+    return matchedTo.components && typeof matchedTo.components.default === 'function'
+  })) {
     componentLoading.value = true
   }
 })
 router.beforeResolve(() => {
   componentLoading.value = false
 })
-createApp(LBase).directive('pv-tooltip', PVTooltip).use(primeVue, {
+createApp(LBase).use(primeVue, {
   unstyled: true
 }).use(router).mount('#n-wrapper')

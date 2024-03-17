@@ -1,13 +1,13 @@
-import {Array, Boolean, Literal, Integer, Object, type Static, String, Union} from '@sinclair/typebox'
-import {typeboxEmail, typeboxZdTicket, typeboxZdUser} from '~/server/utils/constants.ts'
-export const RouteAuthCallbackRes = Object({
+import {Array, Boolean, Literal, Index, Integer, Null, Object, type Static, String, Union} from '@sinclair/typebox'
+export const routeAuthCallbackRes = Object({
   admin: Boolean(),
   nf_id: String(),
   nf_token: String(),
   zd_id: Integer(),
   zd_ord: Integer()
 })
-export const RouteForumsTopicsRes = Array(Object({
+export const routeForumsTopicsRes = Array(Object({
+  category_id: Integer(),
   has_accepted_answer: Boolean(),
   id: Integer(),
   reply_count: Integer(),
@@ -16,7 +16,7 @@ export const RouteForumsTopicsRes = Array(Object({
 }), {
   maxItems: 15
 })
-export const RouteSystemStatusRes = Object({
+export const routeSystemStatusRes = Object({
   page: Object({
     url: String({
       format: 'uri'
@@ -40,32 +40,90 @@ export const RouteSystemStatusRes = Object({
     ])
   })
 })
-export const RouteTicketCommentsRes = Object({
+export const routeTicketCommentsRes = Object({
   comments: Object({}),
-  count: Integer()
+  count: Integer({
+    maximum: 100 * 100
+  })
 })
-export const RouteTicketsInfoRes = Object({
-  followers: Array(typeboxZdUser),
+export const routeTicketsInfoRes = Object({
+  followers: Array(Object({
+    email: String({
+      format: 'email'
+    }),
+    id: Integer(),
+    name: String(),
+    organization_id: Integer(),
+    role: Union([
+      Literal('admin'),
+      Literal('agent'),
+      Literal('end-user')
+    ])
+  })),
   related: Array(Integer()),
-  ticket: typeboxZdTicket
+  ticket: Object({
+    created_at: String({
+      format: 'date-time'
+    }),
+    follower_ids: Array(Integer()),
+    followup_ids: Array(Integer()),
+    id: Integer(),
+    organization_id: Union([
+      Null(),
+      Integer()
+    ]),
+    requester_id: Integer(),
+    status: Union([
+      Literal('closed'),
+      Literal('hold'),
+      Literal('new'),
+      Literal('open'),
+      Literal('pending'),
+      Literal('solved')
+    ]),
+    subject: String(),
+    updated_at: String({
+      format: 'date-time'
+    })
+  })
 })
-export const RouteTicketListRes = Object({
-  count: Integer(),
-  tickets: Array(typeboxZdTicket, {
+export const routeTicketListRes = Object({
+  count: Index(routeTicketCommentsRes, ['count']),
+  tickets: Array(Index(routeTicketsInfoRes, ['ticket']), {
     maxItems: 10
   })
 })
-export const RouteUserInfoRes = Object({
+export const routeUserInfoRes = Object({
   nf: Object({
     avatar_url: String({
       format: 'uri'
     }),
-    email: typeboxEmail,
+    email: String({
+      format: 'email'
+    }),
     full_name: String(),
     id: String(),
-    support_priority: Integer()
+    support_priority: Union([
+      Literal(0),
+      Literal(2),
+      Literal(4),
+      Literal(5),
+      Literal(9),
+      Literal(10),
+      Literal(100),
+      Literal(102),
+      Literal(999),
+      Literal(1000),
+      Literal(1003),
+      Literal(10000),
+      Literal(100000),
+      Literal(100001)
+    ])
   }),
-  zd: typeboxZdUser
+  zd: Index(Index(routeTicketsInfoRes, Literal('followers')), Integer())
 })
-export type TRouteSystemStatusRes = Static<typeof RouteSystemStatusRes>
-export type TRouteUserInfoRes = Static<typeof RouteUserInfoRes>
+export type TRouteForumsTopicsRes = Static<typeof routeForumsTopicsRes>
+export type TRouteSystemStatusRes = Static<typeof routeSystemStatusRes>
+export type TRouteTicketInfoRes = Static<typeof routeTicketsInfoRes>
+export type TRouteTicketListRes = Static<typeof routeTicketListRes>
+export type TRouteUserInfoRes = Static<typeof routeUserInfoRes>

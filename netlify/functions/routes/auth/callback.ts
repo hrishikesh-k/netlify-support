@@ -4,7 +4,7 @@ import {env} from 'node:process'
 import {expTime, jwtSecret} from '~/server/utils/constants.ts'
 import {parse} from 'qs'
 import {RouteAuthCallbackQuery} from '~/types/request.ts'
-import {RouteAuthCallbackRes} from '~/types/response'
+import {routeAuthCallbackRes} from '~/types/response.ts'
 import type {TFastifyTypebox, TJwtPayload} from '~/types/server.ts'
 import type {TNUser} from '~/types/global.ts'
 import {getStore} from "@netlify/blobs";
@@ -13,7 +13,7 @@ export default function (api : TFastifyTypebox) {
     schema: {
       querystring: RouteAuthCallbackQuery,
       response: {
-        200: RouteAuthCallbackRes
+        200: routeAuthCallbackRes
       }
     }
   }, async (req, res) => {

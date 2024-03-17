@@ -45,6 +45,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '~/client': fileURLToPath(new URL('./vite/', import.meta.url)),
+      '~/server': fileURLToPath(new URL('./netlify/functions/', import.meta.url)),
       '~/types': fileURLToPath(new URL('./@types/', import.meta.url))
     }
   }
