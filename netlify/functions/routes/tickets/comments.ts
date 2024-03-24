@@ -1,4 +1,5 @@
 import {ApiError} from '~/server/utils/functions.ts'
+import {JSDOM} from 'jsdom'
 import {jwtDecrypt} from 'jose'
 import {jwtSecret} from '~/server/utils/constants.ts'
 import {RouteTicketCommentsParams} from '~/types/request.ts'
@@ -29,6 +30,31 @@ export default function (api : TFastifyTypebox) {
       }
       ticketComments = ticketComments.concat(zdCommentsRes.comments.filter(comment => {
         return comment.public
+      }).map(filteredComment => {
+          const fragment = JSDOM.fragment(filteredComment.html_body)
+          fragment.querySelectorAll('*').forEach(subChild => {
+            subChild.removeAttribute('dir')
+            if (subChild.tagName === 'A') {
+              subChild.setAttribute('target', '_blank')
+            }
+            if (subChild.classList.contains('collapse-signature') || subChild.classList.contains('signature') || subChild.tagName === 'BR') {
+              subChild.remove()
+            }
+          })
+          return {
+            attachments: filteredComment.attachments,
+            author_id: filteredComment.author_id,
+            created_at: filteredComment.created_at,
+            html_body: Array.from(fragment.children).map(child => {
+              if (child.classList.contains('zd-comment')) {
+                return child.innerHTML.trim()
+              } else {
+                return child.outerHTML.trim()
+              }
+            }).join(),
+            id: filteredComment.id,
+            public: filteredComment.public
+          }
       }))
       if (zdCommentsRes.comments.length === 100) {
         return await fetchZdComments(page + 1)

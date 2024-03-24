@@ -1,16 +1,7 @@
-import type {TRouteForumsTopicsRes, TRouteSystemStatusRes, TRouteTicketInfoRes, TRouteTicketListRes, TRouteUserInfoRes} from '~/types/response.ts'
-export interface TZComment {
-  attachments : Array<{
-  }>
-  author_id : number
-  created_at : string
-  html_body : string
-  id : number
-  public : boolean
-}
-export interface TZComments extends TZPagination {
-  comments : Array<TZComment>
-}
+import type {TRouteForumsTopicsRes, TRouteSystemStatusRes,TRouteTicketCommentsRes, TRouteTicketInfoRes, TRouteTicketListRes, TRouteUserInfoRes} from '~/types/response.ts'
+export type TZAttachment = TRouteTicketCommentsRes['comments'][number]['attachments'][number]
+export type TZComment = TRouteTicketCommentsRes['comments'][number]
+export type TZComments = TRouteTicketCommentsRes
 export type TDTopic = TRouteForumsTopicsRes[number]
 export interface TDTopics {
   topic_list : {

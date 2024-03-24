@@ -2,9 +2,7 @@
   import {computed} from 'vue'
   import type {CProgressSpinnerProps} from '~/types/props.ts'
   import PVProgressSpinner, {type ProgressSpinnerProps} from 'primevue/progressspinner'
-  const props = withDefaults(defineProps<CProgressSpinnerProps>(), {
-    size: 4
-  })
+  const props = defineProps<CProgressSpinnerProps>()
   const pvProgressSpinnerProps = computed<ProgressSpinnerProps>(() => {
     return {
       pt: {
@@ -17,8 +15,8 @@
         },
         root: {
           style: {
-            height: `${props.size * 4}px`,
-            width: `${props.size * 4}px`
+            height: `${(props.size || 4) * 4}px`,
+            width: `${(props.size || 4) * 4}px`
           }
         },
         spinner: 'animate-spin'

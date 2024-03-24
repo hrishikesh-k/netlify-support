@@ -96,8 +96,8 @@
       <template v-slot:content>
         <PVDataView data-key="id" v-bind:value="ticketList.tickets.slice(0, 4)">
           <template v-slot:empty>
-            <div class="dark:odd:bg-neutral-000/3 odd:bg-neutral-light-100/50 box-border flex gap-x-3 items-center h-12 p-3" v-bind:key="i" v-for="i in 5">
-              <!-- TODO: no tickets -->
+            <p v-if="ticketListFetched">No tickets found</p>
+            <div class="dark:odd:bg-neutral-000/3 odd:bg-neutral-light-100/50 box-border flex gap-x-3 items-center h-12 p-3" v-bind:key="i" v-for="i in 5" v-else>
               <CSkeleton width="4rem"/>
               <CSkeleton width="4rem"/>
               <CSkeleton class="flex-1"/>

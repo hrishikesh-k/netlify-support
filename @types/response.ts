@@ -41,7 +41,23 @@ export const routeSystemStatusRes = Object({
   })
 })
 export const routeTicketCommentsRes = Object({
-  comments: Object({}),
+  comments: Array(Object({
+    attachments: Array(Object({
+      content_url: String({
+        format: 'uri'
+      }),
+      file_name: String(),
+      id: Integer(),
+      size: Integer()
+    })),
+    author_id: Integer(),
+    created_at: String({
+      format: 'date-time'
+    }),
+    html_body: String(),
+    id: Integer(),
+    public: Boolean()
+  })),
   count: Integer({
     maximum: 100 * 100
   })
@@ -125,5 +141,6 @@ export const routeUserInfoRes = Object({
 export type TRouteForumsTopicsRes = Static<typeof routeForumsTopicsRes>
 export type TRouteSystemStatusRes = Static<typeof routeSystemStatusRes>
 export type TRouteTicketInfoRes = Static<typeof routeTicketsInfoRes>
+export type TRouteTicketCommentsRes = Static<typeof routeTicketCommentsRes>
 export type TRouteTicketListRes = Static<typeof routeTicketListRes>
 export type TRouteUserInfoRes = Static<typeof routeUserInfoRes>

@@ -1,14 +1,12 @@
 <script setup lang="ts">
   import type {CLoadingIndicatorProps} from '~/types/props.ts'
-  const props = withDefaults(defineProps<CLoadingIndicatorProps>(), {
-    size: 10
-  })
+  const props = defineProps<CLoadingIndicatorProps>()
 </script>
 <template>
   <svg
     class="fill-current"
-    v-bind:height="props.size * 4"
-    v-bind:width="props.size * 4"
+    v-bind:height="(props.size || 10) * 4"
+    v-bind:width="(props.size || 10) * 4"
     viewBox="0 0 128 128">
     <mask id="c-loading-mask">
       <path class="fill-neutral-000" d="M0,0v128h128V0H0z M81.2,82.3H46.8V45.7h34.4V82.3z"/>

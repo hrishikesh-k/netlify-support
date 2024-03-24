@@ -36,7 +36,7 @@ const router = createRouter({
         path: '/tickets/new'
       }, {
         component: () => {
-          return import('~/client/pages/p-tickets.vue')
+          return import('~/client/pages/p-tickets-view.vue')
         },
         meta: {
           breadcrumb: {

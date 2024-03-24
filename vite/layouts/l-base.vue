@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import CFooter from '~/client/components/c-footer.vue'
   import CLoadingIndicator from '~/client/components/c-loading-indicator.vue'
-  import {componentLoading, nfUser, redirectTo, wretchBase} from '~/client/utils/constants.ts'
+  import {componentLoading, nfUser, redirectTo, wretchBase, zdUser} from '~/client/utils/constants.ts'
   import {computed, onMounted, ref} from 'vue'
   import PVProgressBar from 'primevue/progressbar'
   import {useDark} from '@vueuse/core'
@@ -24,6 +24,7 @@
     try {
       const userRes = await wretchBase.get('/user/info').json<TRouteUserInfoRes>()
       nfUser.value = userRes.nf
+      zdUser.value = userRes.zd
       if (redirectTo.value && redirectTo.value.path !== '/' && router.hasRoute(redirectTo.value.name || '')) {
         await router.replace(redirectTo.value.path)
       } else {
