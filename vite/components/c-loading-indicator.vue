@@ -1,6 +1,7 @@
 <script setup lang="ts">
-  import type {CLoadingIndicatorProps} from '~/types/props.ts'
-  const props = defineProps<CLoadingIndicatorProps>()
+  const props = defineProps<{
+    size? : number
+  }>()
 </script>
 <template>
   <svg

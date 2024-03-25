@@ -3,10 +3,11 @@ import awsLambdaFastify from '@fastify/aws-lambda'
 import {connectLambda} from '@netlify/blobs'
 import {env} from 'node:process'
 import {expTime, logLevels} from '~/server/utils/constants.ts'
-import fastify, {type FastifyError} from 'fastify'
+import fastify, {type FastifyError, type FastifyReply} from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import {jwtDecrypt} from 'jose'
 import {jwtSecret} from '~/server/utils/constants.ts'
+import {performance} from 'node:perf_hooks'
 import routeAuthAuthorize from '~/server/routes/auth/authorize.ts'
 import routeAuthCallback from '~/server/routes/auth/callback.ts'
 import routeAuthLogout from '~/server/routes/auth/logout.ts'
@@ -29,25 +30,34 @@ const api = fastify({
   logger: new Logger(),
   requestIdHeader: 'x-nf-request-id'
 }).withTypeProvider<TypeBoxTypeProvider>()
-api.addHook('onRequest', (req, _res, done) => {
+api.addHook('onRequest', (req, res, done) => {
+  const _onRequestHookStart = performance.now()
   // https://github.com/microsoft/TypeScript/issues/26255
   const logLevelHeader = req.headers['x-nf-log-level'] as TLogLevel
-  const wretchSignal = new AbortController()
   if (logLevels.includes(logLevelHeader)) {
     req.log.level = logLevelHeader
   }
   connectLambda(req.awsLambda.event)
   req.origin = new URL(req.awsLambda.event.rawUrl).origin
-  req.wretchBase = wretch().addon(wretchAbort()).addon(wretchFormUrl).addon(wretchQueryString).signal(wretchSignal)
+  req.wretchBase = wretch().addon(wretchAbort()).addon(wretchFormUrl).addon(wretchQueryString)
   req.wretchDiscourse = req.wretchBase.headers({
     'api-key': env['DISCOURSE_KEY']!,
     'api-username': env['DISCOURSE_USERNAME']!
   }).url('https://answers.netlify.com')
   req.wretchNetlify = req.wretchBase.url('https://api.netlify.com/api/v1')
   req.wretchZendesk = req.wretchBase.auth(`Basic ${btoa(`${env['ZENDESK_USERNAME']}/token:${env['ZENDESK_PASSWORD']}`)}`).url('https://netlify.zendesk.com/api/v2')
+  res.serverTimings = []
+  res.addServerTiming('onRequestHook', _onRequestHookStart, performance.now())
   done()
 })
-api.addHook('preHandler', async (req, _res) => {
+api.addHook('onSend', (req, res, _payload, done) => {
+  if (req.log.level === 'trace' && res.serverTimings.length) {
+    res.header('server-timing', res.serverTimings.join(','))
+  }
+  done()
+})
+api.addHook('preHandler', async (req, res) => {
+  const _preHandlerHookStart = performance.now()
   if (req.url.split('/')[2] !== 'auth') {
     let nfToken = req.cookies['nf_token']
     if (!nfToken && req.headers['authorization']) {
@@ -55,10 +65,12 @@ api.addHook('preHandler', async (req, _res) => {
     }
     if (nfToken) {
       try {
+        const _jwtStart = performance.now()
         const jwt = await jwtDecrypt<TJwtPayload>(nfToken, jwtSecret)
         delete jwt.payload.exp
         req.nfToken = jwt.payload
         req.wretchNetlify = req.wretchNetlify.auth(`Bearer ${req.nfToken.nf_token}`)
+        res.addServerTiming('jwt', _jwtStart, performance.now())
       } catch {
         throw ApiError.forbidden('nf_token invalid')
       }
@@ -66,7 +78,19 @@ api.addHook('preHandler', async (req, _res) => {
       throw ApiError.unauthorized('nf_token missing')
     }
   }
+  res.addServerTiming('preHandlerHook', _preHandlerHookStart, performance.now())
 })
+api.decorateReply('addServerTiming', function (this : FastifyReply, name : string, start? : number, end? : number, description? : string) : undefined {
+  let headerValue = name
+  if (start && end) {
+    headerValue += `;dur=${(end - start).toFixed(2)}`
+  }
+  if (description) {
+    headerValue += `;desc="${description}"`
+  }
+  this.serverTimings.push(headerValue)
+})
+api.decorateReply('serverTimings', null)
 api.decorateRequest('nfToken', null)
 api.decorateRequest('origin', null)
 api.decorateRequest('wretchBase', null)

@@ -1,6 +1,7 @@
 import {ApiError} from '~/server/utils/functions.ts'
 import {EncryptJWT} from 'jose'
 import {jwtSecret} from '~/server/utils/constants.ts'
+import {performance} from 'node:perf_hooks'
 import {RouteTicketsInfoParams} from '~/types/request.ts'
 import {routeTicketsInfoRes} from '~/types/response.ts'
 import type {TFastifyTypebox, TTicketTokenJwtPayload} from '~/types/server.ts'
@@ -14,6 +15,7 @@ export default function (api : TFastifyTypebox) {
       }
     }
   }, async (req, res) => {
+    const _handlerStart = performance.now()
     let followersRes
     let relatedRes
     let ticketJwt
@@ -22,7 +24,9 @@ export default function (api : TFastifyTypebox) {
     let userType : TTicketTokenJwtPayload['user_type']
     async function getFollowers() {
       try {
+        const _followersStart = performance.now()
         followersRes = await req.wretchZendesk.get(`/tickets/${req.params.id}/followers.json`).json<TZUsers>()
+        res.addServerTiming('followers', _followersStart, performance.now())
       } catch (followerErr) {
         throw new ApiError('failed to fetch ticket follower details from Zendesk', followerErr)
       }
@@ -38,9 +42,11 @@ export default function (api : TFastifyTypebox) {
     }
     async function getRelated() {
       try {
+        const _relatedStart = performance.now()
         relatedRes = await req.wretchZendesk.get(`/tickets/${req.params.id}/related.json`).json<{
           ticket_related : TZRelated
         }>()
+        res.addServerTiming('related', _relatedStart, performance.now())
       } catch (relatedErr) {
         throw new ApiError('failed to fetch ticket relation details from Zendesk', relatedErr)
       }
@@ -48,9 +54,11 @@ export default function (api : TFastifyTypebox) {
     }
     async function getTicket() {
       try {
+        const _ticketStart = performance.now()
         ticketRes = await req.wretchZendesk.get(`/tickets/${req.params.id}.json`).json<{
           ticket : TZTicket
         }>()
+        res.addServerTiming('ticket', _ticketStart, performance.now())
       } catch (ticketErr) {
         throw new ApiError('failed to fetch ticket details from Zendesk', ticketErr)
       }
@@ -84,6 +92,7 @@ export default function (api : TFastifyTypebox) {
     }
     if (userType) {
       try {
+        const _jwtStart = performance.now()
         ticketJwt = await new EncryptJWT({
           ticket_id: req.params.id,
           user_type: userType
@@ -91,9 +100,11 @@ export default function (api : TFastifyTypebox) {
           alg: 'dir',
           enc: 'A256CBC-HS512'
         }).encrypt(jwtSecret)
+        res.addServerTiming('jwtTicket', _jwtStart, performance.now())
       } catch (ticketJwtErr) {
         throw ApiError.internalServerError('failed to encrypt data', ticketJwtErr)
       }
+      res.addServerTiming('handler', _handlerStart, performance.now())
       return res.setCookie(`nf_${req.params.id}_token`, ticketJwt, {
         maxAge: 3600,
         path: `/api/tickets/${req.params.id}/`

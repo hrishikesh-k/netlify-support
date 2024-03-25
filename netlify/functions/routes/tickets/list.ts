@@ -1,4 +1,5 @@
 import {ApiError} from '~/server/utils/functions.ts'
+import {performance} from 'node:perf_hooks'
 import {RouteTicketsListQuery} from '~/types/request.ts'
 import {routeTicketListRes} from '~/types/response.ts'
 import type {TFastifyTypebox} from '~/types/server.ts'
@@ -12,6 +13,7 @@ export default function (api: TFastifyTypebox) {
       }
     }
   }, async (req, res) => {
+    const _handlerStart = performance.now()
     let ticketListRes
     req.wretchZendesk = req.wretchZendesk.query({
       page: req.query.page || 1,
@@ -29,10 +31,13 @@ export default function (api: TFastifyTypebox) {
       req.wretchZendesk = req.wretchZendesk.url(`/users/${req.nfToken.zd_id}/tickets/${req.query.category || 'requested'}.json`)
     }
     try {
+      const _ticketStart = performance.now()
       ticketListRes = await req.wretchZendesk.get().json<TZTickets>()
+      res.addServerTiming('tickets', _ticketStart, performance.now())
     } catch (tickerListErr) {
       throw new ApiError('failed to fetch ticket list from Zendesk', tickerListErr)
     }
+    res.addServerTiming('handler', _handlerStart, performance.now())
     return res.send(ticketListRes)
   })
 }

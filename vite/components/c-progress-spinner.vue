@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import {computed} from 'vue'
-  import type {CProgressSpinnerProps} from '~/types/props.ts'
   import PVProgressSpinner, {type ProgressSpinnerProps} from 'primevue/progressspinner'
-  const props = defineProps<CProgressSpinnerProps>()
+  const props = defineProps<{
+    size? : number
+  }>()
   const pvProgressSpinnerProps = computed<ProgressSpinnerProps>(() => {
     return {
       pt: {

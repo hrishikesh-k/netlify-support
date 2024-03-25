@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import CFooter from '~/client/components/c-footer.vue'
   import CLoadingIndicator from '~/client/components/c-loading-indicator.vue'
   import {componentLoading, nfUser, redirectTo, wretchBase, zdUser} from '~/client/utils/constants.ts'
   import {computed, onMounted, ref} from 'vue'
@@ -55,7 +54,6 @@
     <div class="flex flex-1 h-full items-center justify-center w-full" v-else>
       <CLoadingIndicator v-bind:size="35"/>
     </div>
-    <CFooter/>
   </div>
 </template>
 <style>

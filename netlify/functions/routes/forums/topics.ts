@@ -1,4 +1,5 @@
 import {ApiError} from '~/server/utils/functions.ts'
+import {performance} from 'node:perf_hooks'
 import {RouteForumsTopicsQuery} from '~/types/request.ts'
 import {routeForumsTopicsRes} from '~/types/response.ts'
 import type {TFastifyTypebox} from '~/types/server.ts'
@@ -12,6 +13,7 @@ export default function (api : TFastifyTypebox) {
       }
     }
   }, async (req, res) => {
+    const _handlerStart = performance.now()
     let topicsRes
     if (req.query.type === 'latest') {
       req.wretchDiscourse = req.wretchDiscourse.query({
@@ -23,10 +25,13 @@ export default function (api : TFastifyTypebox) {
       }).url('/top.json')
     }
     try {
+      const _topicsStart = performance.now()
       topicsRes = await req.wretchDiscourse.get().json<TDTopics>()
+      res.addServerTiming('topics', _topicsStart, performance.now())
     } catch (topicErr) {
       throw new ApiError('failed to fetch posts from Discourse', topicErr)
     }
+    res.addServerTiming('handler', _handlerStart, performance.now())
     return res.send(topicsRes.topic_list.topics.filter(topic => {
       return topic.category_id === 48
     }).map(filteredTopic => {

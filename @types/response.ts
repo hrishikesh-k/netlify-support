@@ -60,22 +60,26 @@ export const routeTicketCommentsRes = Object({
   })),
   count: Integer({
     maximum: 100 * 100
-  })
-})
-export const routeTicketsInfoRes = Object({
-  followers: Array(Object({
+  }),
+  users: Array(Object({
     email: String({
       format: 'email'
     }),
     id: Integer(),
     name: String(),
-    organization_id: Integer(),
+    organization_id: Union([
+      Integer(),
+      Null()
+    ]),
     role: Union([
       Literal('admin'),
       Literal('agent'),
       Literal('end-user')
     ])
-  })),
+  }))
+})
+export const routeTicketsInfoRes = Object({
+  followers: Index(routeTicketCommentsRes, Literal('users')),
   related: Array(Integer()),
   ticket: Object({
     created_at: String({
@@ -136,7 +140,7 @@ export const routeUserInfoRes = Object({
       Literal(100001)
     ])
   }),
-  zd: Index(Index(routeTicketsInfoRes, Literal('followers')), Integer())
+  zd: Index(Index(routeTicketCommentsRes, Literal('users')), Integer())
 })
 export type TRouteForumsTopicsRes = Static<typeof routeForumsTopicsRes>
 export type TRouteSystemStatusRes = Static<typeof routeSystemStatusRes>

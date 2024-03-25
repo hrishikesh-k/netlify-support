@@ -233,62 +233,64 @@
   })
 </script>
 <template>
-  <header class="bg-neutral-000 dark:bg-neutral-dark-800 border-1 border-neutral-light-300 border-rounded-2 border-solid dark:border-neutral-dark-700 box-border m-b-6 p-3 w-full">
-    <PVToolbar v-bind="pvToolbarProps">
-      <template v-slot:start>
-        <PVBreadcrumb v-bind="pvBreadcrumbProps">
-          <template v-slot:item="pvBreadcrumbItem">
-            <RouterLink class="dark:hover:bg-teal-900 hover:bg-teal-000 block border-rounded-1.5 box-border p-1 transition-duration-250" to="/" v-if="pvBreadcrumbItem.item.route === '/'">
-              <svg class="block h-8 w-8" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path class="fill-teal-800 dark:fill-neutral-000 dark-group-hover:fill-teal-800 group-hover:fill-neutral-000 transition-duration-250" d="m30.17,30.86h-3.29l-.27-.27v-7.7c0-1.37-.54-2.43-2.19-2.47-.85-.02-1.82,0-2.86.04l-.16.16v9.97l-.27.27h-3.29l-.27-.27v-13.16l.27-.27h7.41c2.88,0,5.21,2.33,5.21,5.21v8.23l-.27.27Z"/>
-                <path class="fill-teal-400 dark:fill-teal-200 dark:group-hover:fill-teal-400 group-hover:fill-teal-200 transition-duration-250" d="m21.97,46.78v-10.93l.29-.29h3.48l.29.29v10.93l-.29.29h-3.48l-.29-.29Zm0-34.63V1.22l.29-.29h3.48l.29.29v10.93l-.29.29h-3.48l-.29-.29Zm-9.19,26.53h-.48l-2.39-2.39v-.48l3.18-3.19h2.53s.34.34.34.34v2.53l-3.18,3.19Zm-2.87-26.37v-.48l2.39-2.39h.48l3.19,3.19v2.53l-.34.34h-2.53l-3.19-3.19ZM.29,21.97h12.3l.29.29v3.48l-.29.29H.29L0,25.74v-3.48l.29-.29Zm47.42,4.07h-12.3l-.29-.29v-3.48l.29-.29h12.3l.29.29v3.48l-.29.29Z"/>
-              </svg>
-            </RouterLink>
-            <RouterLink class="dark:hover:bg-teal-900 hover:bg-teal-000 sm:block border-rounded-1.5 decoration-none font-600 hidden p-2 text-inherit dark:hover:text-teal-100 hover:text-teal-800 transition-duration-250" v-bind:to="pvBreadcrumbItem.item.route" v-else>{{pvBreadcrumbItem.label}}</RouterLink>
-          </template>
-          <template v-slot:separator>
-            <span class="font-200 sm:block hidden text-neutral-light-300 dark:text-neutral-dark-300 text-5">/</span>
-          </template>
-        </PVBreadcrumb>
-      </template>
-      <template v-slot:end>
-        <component v-bind="systemStatusIndicator.component.props" v-bind:is="systemStatusIndicator.component.name" v-on="systemStatusIndicator.component.on">
-          <PVInlineMessage v-bind="systemStatusIndicator.props">
-            <template v-slot:icon>
-              <CIcon class="flex-shrink-0" v-bind="systemStatusIndicator.icon" v-if="systemStatus"/>
-              <CProgressSpinner v-bind:size="3" v-else/>
-            </template>{{systemStatusIndicator.label}}</PVInlineMessage>
-        </component>
-        <template v-if="nfUser">
-          <PVButton v-bind="pvButtonAvatarProps" v-on:click="userMenuToggle">
-            <PVAvatar v-bind="pvAvatarProps"/>
-          </PVButton>
-          <PVMenu id="user-menu" ref="userMenuElement" v-bind="pvMenuProps">
-            <!-- TODO: handle transition -->
-            <template v-slot:end>
-              <a class="decoration-none text-inherit" href="/api/auth/logout">
-                <PVButton v-bind="pvButtonLogoutProps">
-                  <template v-slot:icon>
-                    <CIcon name="right-from-bracket"/>
-                  </template>
-                </PVButton>
-              </a>
-            </template>
-            <template v-slot:item="pvMenuItem">
-              <RouterLink class="box-border decoration-none flex gap-x-2 items-center p-x-4 p-y-2 text-inherit" v-bind:to="pvMenuItem.item.route" v-if="pvMenuItem.item.route">
-                <CIcon v-bind:name="pvMenuItem.item.icon as CIconProps['name']"/>
-                <span>{{pvMenuItem.label}}</span>
+  <div class="bg-neutral-000 dark:bg-neutral-dark-900 box-border left-0 m-x-auto max-w-350 p-6 pos-fixed right-0 top-0 w-full z-1">
+    <header class="bg-neutral-000 dark:bg-neutral-dark-800 border-1 border-neutral-light-300 border-rounded-2 border-solid dark:border-neutral-dark-700 box-border p-3 w-full">
+      <PVToolbar v-bind="pvToolbarProps">
+        <template v-slot:start>
+          <PVBreadcrumb v-bind="pvBreadcrumbProps">
+            <template v-slot:item="pvBreadcrumbItem">
+              <RouterLink class="dark:hover:bg-teal-900 hover:bg-teal-000 block border-rounded-1.5 box-border p-1 transition-duration-250" to="/" v-if="pvBreadcrumbItem.item.route === '/'">
+                <svg class="block h-8 w-8" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                  <path class="fill-teal-800 dark:fill-neutral-000 dark-group-hover:fill-teal-800 group-hover:fill-neutral-000 transition-duration-250" d="m30.17,30.86h-3.29l-.27-.27v-7.7c0-1.37-.54-2.43-2.19-2.47-.85-.02-1.82,0-2.86.04l-.16.16v9.97l-.27.27h-3.29l-.27-.27v-13.16l.27-.27h7.41c2.88,0,5.21,2.33,5.21,5.21v8.23l-.27.27Z"/>
+                  <path class="fill-teal-400 dark:fill-teal-200 dark:group-hover:fill-teal-400 group-hover:fill-teal-200 transition-duration-250" d="m21.97,46.78v-10.93l.29-.29h3.48l.29.29v10.93l-.29.29h-3.48l-.29-.29Zm0-34.63V1.22l.29-.29h3.48l.29.29v10.93l-.29.29h-3.48l-.29-.29Zm-9.19,26.53h-.48l-2.39-2.39v-.48l3.18-3.19h2.53s.34.34.34.34v2.53l-3.18,3.19Zm-2.87-26.37v-.48l2.39-2.39h.48l3.19,3.19v2.53l-.34.34h-2.53l-3.19-3.19ZM.29,21.97h12.3l.29.29v3.48l-.29.29H.29L0,25.74v-3.48l.29-.29Zm47.42,4.07h-12.3l-.29-.29v-3.48l.29-.29h12.3l.29.29v3.48l-.29.29Z"/>
+                </svg>
               </RouterLink>
-              <hr v-if="pvMenuItem.item.separator"/>
+              <RouterLink class="dark:hover:bg-teal-900 hover:bg-teal-000 sm:block border-rounded-1.5 decoration-none font-600 hidden p-2 text-inherit dark:hover:text-teal-100 hover:text-teal-800 transition-duration-250" v-bind:to="pvBreadcrumbItem.item.route" v-else>{{pvBreadcrumbItem.label}}</RouterLink>
             </template>
-            <template v-slot:start>
-              <p class="font-500 m-0">{{nfUser.full_name}}</p>
-              <p class="m-0 text-3.5 dark:text-neutral-dark-200">{{nfUser.email}}</p>
+            <template v-slot:separator>
+              <span class="font-200 sm:block hidden text-neutral-light-300 dark:text-neutral-dark-300 text-5">/</span>
             </template>
-          </PVMenu>
+          </PVBreadcrumb>
         </template>
-        <CProgressSpinner class="dark:text-teal-400" v-bind:size="10" v-else/>
-      </template>
-    </PVToolbar>
-  </header>
+        <template v-slot:end>
+          <component v-bind="systemStatusIndicator.component.props" v-bind:is="systemStatusIndicator.component.name" v-on="systemStatusIndicator.component.on">
+            <PVInlineMessage v-bind="systemStatusIndicator.props">
+              <template v-slot:icon>
+                <CIcon class="flex-shrink-0" v-bind="systemStatusIndicator.icon" v-if="systemStatus"/>
+                <CProgressSpinner v-bind:size="3" v-else/>
+              </template>{{systemStatusIndicator.label}}</PVInlineMessage>
+          </component>
+          <template v-if="nfUser">
+            <PVButton v-bind="pvButtonAvatarProps" v-on:click="userMenuToggle">
+              <PVAvatar v-bind="pvAvatarProps"/>
+            </PVButton>
+            <PVMenu id="user-menu" ref="userMenuElement" v-bind="pvMenuProps">
+              <!-- TODO: handle transition -->
+              <template v-slot:end>
+                <a class="decoration-none text-inherit" href="/api/auth/logout">
+                  <PVButton v-bind="pvButtonLogoutProps">
+                    <template v-slot:icon>
+                      <CIcon name="right-from-bracket"/>
+                    </template>
+                  </PVButton>
+                </a>
+              </template>
+              <template v-slot:item="pvMenuItem">
+                <RouterLink class="box-border decoration-none flex gap-x-2 items-center p-x-4 p-y-2 text-inherit" v-bind:to="pvMenuItem.item.route" v-if="pvMenuItem.item.route">
+                  <CIcon v-bind:name="pvMenuItem.item.icon as CIconProps['name']"/>
+                  <span>{{pvMenuItem.label}}</span>
+                </RouterLink>
+                <hr v-if="pvMenuItem.item.separator"/>
+              </template>
+              <template v-slot:start>
+                <p class="font-500 m-0">{{nfUser.full_name}}</p>
+                <p class="m-0 text-3.5 dark:text-neutral-dark-200">{{nfUser.email}}</p>
+              </template>
+            </PVMenu>
+          </template>
+          <CProgressSpinner class="dark:text-teal-400" v-bind:size="10" v-else/>
+        </template>
+      </PVToolbar>
+    </header>
+  </div>
 </template>
