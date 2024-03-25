@@ -34,6 +34,7 @@ api.addHook('onRequest', (req, res, done) => {
   const _onRequestHookStart = performance.now()
   // https://github.com/microsoft/TypeScript/issues/26255
   const logLevelHeader = req.headers['x-nf-log-level'] as TLogLevel
+  console.log('header', logLevelHeader)
   if (logLevels.includes(logLevelHeader)) {
     req.log.level = logLevelHeader
   }
@@ -51,6 +52,7 @@ api.addHook('onRequest', (req, res, done) => {
   done()
 })
 api.addHook('onSend', (req, res, _payload, done) => {
+  console.log('level', req.log.level)
   if (req.log.level === 'trace' && res.serverTimings.length) {
     res.header('server-timing', res.serverTimings.join(','))
   }

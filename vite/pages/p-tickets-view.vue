@@ -13,10 +13,20 @@
   import {WretchError} from 'wretch/resolver'
   const pvDataTableProps = computed<DataTableProps>(() => {
     const value : DataTableProps['value'] = []
-    value.push({
-      name: 'Subject',
-      value: ticketInfo.value?.subject
-    })
+    if (ticketInfo.value) {
+      value.push({
+        name: 'Subject',
+        value: ticketInfo.value.subject
+      })
+      value.push({
+        name: 'Created',
+        value: new Date(ticketInfo.value.created_at).toLocaleString()
+      })
+      value.push({
+        name: 'Updated',
+        value: new Date(ticketInfo.value.updated_at).toLocaleString()
+      })
+    }
     return {
       dataKey: 'name',
       pt: {

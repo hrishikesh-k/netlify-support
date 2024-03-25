@@ -119,7 +119,7 @@
                   <PVColumn header="Description" field="description" v-bind="pvColumnProps"></PVColumn>
                 </PVDataTable>
               </PVOverlayPanel>
-              <span class="text-center flex-1">Subject</span>
+              <span class="flex-1">Subject</span>
               <span class="sm:block hidden text-center w-24">Updated</span>
             </div>
             <CTicketListItem v-bind:ticket="pvDataViewListItem" v-for="pvDataViewListItem in pvDataViewListItems.items"/>
