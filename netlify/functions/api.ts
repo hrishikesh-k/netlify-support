@@ -33,8 +33,7 @@ const api = fastify({
 api.addHook('onRequest', (req, res, done) => {
   const _onRequestHookStart = performance.now()
   // https://github.com/microsoft/TypeScript/issues/26255
-  const logLevelHeader = req.headers['x-nf-log-level'] as TLogLevel
-  console.log(req.headers)
+  const logLevelHeader = req.headers['x-nfsp-log-level'] as TLogLevel
   if (logLevels.includes(logLevelHeader)) {
     req.log.level = logLevelHeader
   }
