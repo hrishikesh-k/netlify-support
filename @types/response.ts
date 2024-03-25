@@ -71,6 +71,14 @@ export const routeTicketCommentsRes = Object({
       Integer(),
       Null()
     ]),
+    photo: Union([
+      Null(),
+      Object({
+        content_url: String({
+          format: 'uri'
+        })
+      })
+    ]),
     role: Union([
       Literal('admin'),
       Literal('agent'),

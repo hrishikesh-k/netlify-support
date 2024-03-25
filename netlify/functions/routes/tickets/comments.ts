@@ -1,5 +1,4 @@
 import {ApiError} from '~/server/utils/functions.ts'
-import {env} from 'node:process'
 import {JSDOM} from 'jsdom'
 import {jwtDecrypt} from 'jose'
 import {jwtSecret} from '~/server/utils/constants.ts'
@@ -37,18 +36,37 @@ export default function (api : TFastifyTypebox) {
       }
       ticketComments = ticketComments.concat(zdCommentsRes.comments.filter(comment => {
         return comment.public
-      }).map(filteredComment => {
+      }).map((filteredComment) => {
           const _jsDomStart = performance.now()
           const fragment = JSDOM.fragment(filteredComment.html_body)
           fragment.querySelectorAll('*').forEach(subChild => {
             subChild.removeAttribute('dir')
+            if (subChild.tagName === 'BLOCKQUOTE' && subChild.hasAttribute('style')) {
+              const parentElement = subChild.parentElement
+              if (parentElement && parentElement.innerHTML.match(/On [A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{1,2}, [0-9]{4} at [0-9]{1,2}:[0-9]{1,2}.?(A|P)M /)) {
+                parentElement.remove()
+              }
+            }
             if (subChild.tagName === 'A') {
               subChild.setAttribute('target', '_blank')
             }
-            if (subChild.classList.contains('collapse-signature') || subChild.classList.contains('signature') || subChild.tagName === 'BR') {
+            if (subChild.classList.contains('collapse-signature') || subChild.classList.contains('signature')) {
               subChild.remove()
             }
           })
+          if (!ticketUsers.find(ticketUser => {
+            return ticketUser.id === filteredComment.author_id
+          })) {
+            const userToPush = zdCommentsRes.users.find(user => {
+              return user.id === filteredComment.author_id
+            })!
+            if (userToPush.photo) {
+              userToPush.photo = {
+                content_url: userToPush.photo.content_url
+              }
+            }
+            ticketUsers.push(userToPush)
+          }
           res.addServerTiming(`jsDom-page-${page}`, _jsDomStart, performance.now())
           return {
             attachments: filteredComment.attachments,
@@ -65,19 +83,6 @@ export default function (api : TFastifyTypebox) {
             public: filteredComment.public
           }
       }))
-      zdCommentsRes.users.forEach(user => {
-        if (!ticketUsers.find(ticketUser => {
-          return ticketUser.id === user.id
-        }) && user.email !== env['ZENDESK_USERNAME']) {
-          ticketUsers.push({
-            email: user.email,
-            id: user.id,
-            name: user.name,
-            organization_id: user.organization_id,
-            role: user.role
-          })
-        }
-      })
       if (zdCommentsRes.comments.length === 100) {
         return await fetchZdComments(page + 1)
       }

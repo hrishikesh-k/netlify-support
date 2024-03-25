@@ -72,6 +72,13 @@ export default function (api : TFastifyTypebox) {
         throw new ApiError('failed to create user on Zendesk', zUserErr)
       }
     }
+    if (zUserRes.photo) {
+      zUserRes.photo = {
+        content_url: zUserRes.photo.content_url
+      }
+    } else {
+      zUserRes.photo = null
+    }
     try {
       const _jwtStart = performance.now()
       jwt = await new EncryptJWT({
@@ -102,6 +109,7 @@ export default function (api : TFastifyTypebox) {
         id: zUserRes.id,
         name: zUserRes.name,
         organization_id: zUserRes.organization_id,
+        photo: zUserRes.photo,
         role: zUserRes.role
       }
     })
