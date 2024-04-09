@@ -77,11 +77,11 @@ export default function (api : TFastifyTypebox) {
     try {
       const _jwtStart = performance.now()
       jwt = await new EncryptJWT({
-        email: userRes.email,
-        nf_id: userRes.id,
-        nf_token: tokenRes.access_token,
-        zd_id: 0,
-        zd_org: null
+        netlify: {
+          email: userRes.email,
+          id: userRes.id,
+          token: tokenRes.access_token
+        }
       } satisfies TJwtPayload).setExpirationTime(`${expTime}s`).setProtectedHeader({
         alg: 'dir',
         enc: 'A256CBC-HS512'

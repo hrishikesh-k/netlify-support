@@ -22,13 +22,13 @@ export default function (api: TFastifyTypebox) {
       sort_order: 'desc'
     })
     if (req.query.category === 'organization') {
-      if (req.nfToken.zd_org) {
-        req.wretchZendesk = req.wretchZendesk.url(`/organizations/${req.nfToken.zd_org}/tickets.json`)
+      if (req.user.zendesk!.org) {
+        req.wretchZendesk = req.wretchZendesk.url(`/organizations/${req.user.zendesk!.org}/tickets.json`)
       } else {
         throw ApiError.forbidden('not a part of a Zendesk organization')
       }
     } else {
-      req.wretchZendesk = req.wretchZendesk.url(`/users/${req.nfToken.zd_id}/tickets/${req.query.category || 'requested'}.json`)
+      req.wretchZendesk = req.wretchZendesk.url(`/users/${req.user.zendesk!.id}/tickets/${req.query.category || 'requested'}.json`)
     }
     try {
       const _ticketStart = performance.now()

@@ -79,15 +79,15 @@ export default function (api : TFastifyTypebox) {
       await getRelated(),
       await getTicket()
     ])
-    if (ticketDetailsRes[2].requester_id === req.nfToken.zd_id) {
+    if (ticketDetailsRes[2].requester_id === req.user.zendesk!.id) {
       userType = 'requester'
-    } else if (ticketDetailsRes[2].organization_id === req.nfToken.zd_org) {
+    } else if (ticketDetailsRes[2].organization_id === req.user.zendesk!.org) {
       userType = 'organization'
     } else if (ticketDetailsRes[0].some(follower => {
-      return follower.id === req.nfToken!.zd_id
+      return follower.id === req.user.zendesk!.id
     })) {
       userType = 'follower'
-    } else if (req.nfToken.email.endsWith('@netlify.com')) {
+    } else if (req.user.netlify.email.endsWith('@netlify.com') || req.user.zendesk!.email.endsWith('@netlify.com')) {
       userType = 'netlify'
     }
     if (userType) {

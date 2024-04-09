@@ -2,7 +2,7 @@
   import {computed} from 'vue'
   import CTicketAttachment from '~/client/components/c-ticket-attachment.vue'
   import {format, parseISO} from 'date-fns'
-  import {nfUser, ticketUsers, zdUser} from '~/client/utils/constants.ts'
+  import {netlifyUser, ticketUsers, zendeskUser} from '~/client/utils/constants.ts'
   import PVAvatar, {type AvatarProps} from 'primevue/avatar'
   import PVCard, {type CardProps} from 'primevue/card'
   import PVDataView from 'primevue/dataview'
@@ -12,7 +12,7 @@
       if (commentAuthorFromUsers.value) {
         if (commentAuthorFromUsers.value.email.endsWith('@netlify.com')) {
           return `${commentAuthorFromUsers.value.name} (Netlify)`
-        } else if (commentAuthorFromUsers.value.id === zdUser.value!.id) {
+        } else if (commentAuthorFromUsers.value.id === zendeskUser.value!.id) {
           return `${commentAuthorFromUsers.value.name} (You)`
         } else {
           return commentAuthorFromUsers.value.name
@@ -47,8 +47,8 @@
     if (commentAuthorFromUsers.value) {
       if (commentAuthorFromUsers.value.photo) {
         propsToReturn.image = commentAuthorFromUsers.value.photo.content_url
-      } else if (commentAuthorFromUsers.value.id === zdUser.value!.id) {
-        propsToReturn.image = nfUser.value!.avatar_url
+      } else if (commentAuthorFromUsers.value.id === zendeskUser.value!.id) {
+        propsToReturn.image = netlifyUser.value!.avatar_url
       } else {
         propsToReturn.label = commentAuthor.value.slice(0, 1).toUpperCase()
       }

@@ -12,7 +12,7 @@ export interface TNAccount {
   id : string
   support_priority : TNUser['support_priority']
 }
-export type TNUser = TRouteUserInfoRes['nf']
+export type TNUser = TRouteUserInfoRes['netlify']
 export type TSStatus = TRouteSystemStatusRes
 interface TZPagination {
   count : number
@@ -22,7 +22,7 @@ export interface TZRelated {
 }
 export type TZTicket = TRouteTicketInfoRes['ticket']
 export type TZTickets = TRouteTicketListRes
-export type TZUser = TRouteUserInfoRes['zd']
+export type TZUser = Required<TRouteUserInfoRes>['zendesk']
 export interface TZUsers extends TZPagination {
   users : Array<TZUser>
 }

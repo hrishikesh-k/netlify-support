@@ -17,11 +17,17 @@ export class ApiError extends Error {
   static badRequest(msg : string, err? : any) {
     return new ApiError(msg, err, 400)
   }
+  static conflict(msg : string, err? : any) {
+    return new ApiError(msg, err, 409)
+  }
   static forbidden(msg : string, err? : any) {
     return new ApiError(msg, err, 403)
   }
   static internalServerError(msg : string, err? : any) {
     return new ApiError(msg, err, 500)
+  }
+  static notFound(msg : string, err? : any) {
+    return new ApiError(msg, err, 404)
   }
   static unauthorized(msg : string, err? : any) {
     return new ApiError(msg, err, 401)

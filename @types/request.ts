@@ -33,4 +33,10 @@ export const RouteTicketsListQuery = Object({
     maximum: 100
   }))
 })
+export const routeUserCreateZendeskBody = Object({
+  name: String(),
+  photo: Optional(String({
+    format: 'uri'
+  }))
+})
 export type TRouteAuthAuthorizeQuery = Static<typeof RouteAuthAuthorizeQuery>

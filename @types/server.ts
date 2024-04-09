@@ -5,11 +5,16 @@ import type {AbortWretch, AbortResolver, FormUrlAddon, QueryStringAddon} from 'w
 import type {Wretch} from 'wretch'
 export type TFastifyTypebox = FastifyInstance<RawServerDefault, RawRequestDefaultExpression, RawReplyDefaultExpression, FastifyBaseLogger, TypeBoxTypeProvider>
 export type TJwtPayload = {
-  email : string
-  nf_id : string
-  nf_token : string
-  zd_id : number
-  zd_org : null | number
+  netlify : {
+    email : string
+    id : string
+    token : string
+  }
+  zendesk? : {
+    email : string
+    id : number
+    org : null | number
+  }
 }
 export type TTicketTokenJwtPayload = {
   ticket_id : number

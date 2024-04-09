@@ -58,7 +58,8 @@ api.addHook('onSend', (req, res, _payload, done) => {
 })
 api.addHook('preHandler', async (req, res) => {
   const _preHandlerHookStart = performance.now()
-  if (req.url.split('/')[2] !== 'auth') {
+  const reqUrlSeg = req.url.split('/')
+  if (reqUrlSeg[2] !== 'auth') {
     let nfToken = req.cookies['nf_token']
     if (!nfToken && req.headers['authorization']) {
       nfToken = req.headers['authorization'].slice(7)
@@ -68,11 +69,14 @@ api.addHook('preHandler', async (req, res) => {
         const _jwtStart = performance.now()
         const jwt = await jwtDecrypt<TJwtPayload>(nfToken, jwtSecret)
         delete jwt.payload.exp
-        req.nfToken = jwt.payload
-        req.wretchNetlify = req.wretchNetlify.auth(`Bearer ${req.nfToken.nf_token}`)
+        req.user = jwt.payload
+        req.wretchNetlify = req.wretchNetlify.auth(`Bearer ${req.user.netlify.token}`)
         res.addServerTiming('jwt', _jwtStart, performance.now())
       } catch {
         throw ApiError.forbidden('nf_token invalid')
+      }
+      if (reqUrlSeg[2] === 'tickets' && !req.user.zendesk) {
+        throw ApiError.forbidden('zendesk user not configured')
       }
     } else {
       throw ApiError.unauthorized('nf_token missing')
@@ -91,8 +95,8 @@ api.decorateReply('addServerTiming', function (this : FastifyReply, name : strin
   this.serverTimings.push(headerValue)
 })
 api.decorateReply('serverTimings', null)
-api.decorateRequest('nfToken', null)
 api.decorateRequest('origin', null)
+api.decorateRequest('user', null)
 api.decorateRequest('wretchBase', null)
 api.decorateRequest('wretchDiscourse', null)
 api.decorateRequest('wretchNetlify', null)

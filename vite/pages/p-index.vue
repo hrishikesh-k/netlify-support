@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import CFooter from '~/client/components/c-footer.vue'
   import CHeader from '~/client/components/c-header.vue'
-  import {nfUser} from '~/client/utils/constants.ts'
+  import {netlifyUser} from '~/client/utils/constants.ts'
   import {useRoute, useRouter} from 'vue-router'
   import {watch} from 'vue'
   const route = useRoute()
@@ -9,7 +9,7 @@
   watch(() => {
     return route.path
   }, async () => {
-    if (route.path === '/' && nfUser.value) {
+    if (route.path === '/' && netlifyUser.value) {
       await router.replace('/dashboard')
     }
   })

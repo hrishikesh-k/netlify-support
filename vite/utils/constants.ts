@@ -6,8 +6,8 @@ import wretchAbort from 'wretch/addons/abort'
 import wretchFormUrl from 'wretch/addons/formUrl'
 import wretchQueryString from 'wretch/addons/queryString'
 export const componentLoading = ref<boolean>(false)
-export const nfUser = ref<null | TNUser>(null)
+export const netlifyUser = ref<null | TNUser>(null)
 export const redirectTo = ref<null | Pick<RouteLocationNormalizedLoaded, 'name' | 'path'>>(null)
 export const ticketUsers = ref<null | TZComments['users']>(null)
 export const wretchBase = wretch('/api').addon(wretchAbort()).addon(wretchFormUrl).addon(wretchQueryString)
-export const zdUser = ref<null | TZUser>(null)
+export const zendeskUser = ref<null | TZUser | undefined>(null)

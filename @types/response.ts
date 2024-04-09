@@ -1,4 +1,4 @@
-import {Array, Boolean, Literal, Index, Integer, Null, Object, type Static, String, Union} from '@sinclair/typebox'
+import {Array, Boolean, Literal, Index, Integer, Null, Object, Optional, type Static, String, Union} from '@sinclair/typebox'
 export const routeAuthCallbackRes = Object({
   admin: Boolean(),
   nf_id: String(),
@@ -79,6 +79,9 @@ export const routeTicketCommentsRes = Object({
         })
       })
     ]),
+    remote_photo_url: Optional(String({
+      format: 'uri'
+    })),
     role: Union([
       Literal('admin'),
       Literal('agent'),
@@ -122,7 +125,10 @@ export const routeTicketListRes = Object({
   })
 })
 export const routeUserInfoRes = Object({
-  nf: Object({
+  discourse: Optional(Object({
+
+  })),
+  netlify: Object({
     avatar_url: String({
       format: 'uri'
     }),
@@ -148,7 +154,7 @@ export const routeUserInfoRes = Object({
       Literal(100001)
     ])
   }),
-  zd: Index(Index(routeTicketCommentsRes, Literal('users')), Integer())
+  zendesk: Optional(Index(Index(routeTicketCommentsRes, Literal('users')), Integer()))
 })
 export type TRouteForumsTopicsRes = Static<typeof routeForumsTopicsRes>
 export type TRouteSystemStatusRes = Static<typeof routeSystemStatusRes>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import CLoadingIndicator from '~/client/components/c-loading-indicator.vue'
-  import {componentLoading, nfUser, redirectTo, wretchBase, zdUser} from '~/client/utils/constants.ts'
+  import {componentLoading, netlifyUser, redirectTo, wretchBase, zendeskUser} from '~/client/utils/constants.ts'
   import {computed, onMounted, ref} from 'vue'
   import PVProgressBar from 'primevue/progressbar'
   import {useDark} from '@vueuse/core'
@@ -11,7 +11,7 @@
   const router = useRouter()
   const routerReady = ref<boolean>(false)
   const showRouterView = computed<boolean>(() => {
-    return routerReady.value && (nfUser.value !== null || route.path === '/login')
+    return routerReady.value && (netlifyUser.value !== null || route.path === '/login')
   })
   onMounted(async () => {
     await router.isReady()
@@ -22,8 +22,8 @@
     }
     try {
       const userRes = await wretchBase.get('/user/info').json<TRouteUserInfoRes>()
-      nfUser.value = userRes.nf
-      zdUser.value = userRes.zd
+      netlifyUser.value = userRes.netlify
+      zendeskUser.value = userRes.zendesk
       if (redirectTo.value && redirectTo.value.path !== '/' && router.hasRoute(redirectTo.value.name || '')) {
         await router.replace(redirectTo.value.path)
       } else {

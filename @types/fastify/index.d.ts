@@ -11,8 +11,8 @@ declare module 'fastify' {
       context : HandlerContext
       event : HandlerEvent & Pick<LambdaEvent, 'blobs' | 'headers'>
     }
-    nfToken : TJwtPayload
     origin : string
+    user : TJwtPayload
     wretchBase : TWretchBase
     wretchDiscourse : TWretchBase
     wretchNetlify : TWretchBase

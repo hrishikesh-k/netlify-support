@@ -3,7 +3,7 @@
   import type {CIconProps} from '~/types/props.ts'
   import {computed, type LinkHTMLAttributes, ref} from 'vue'
   import CProgressSpinner from '~/client/components/c-progress-spinner.vue'
-  import {nfUser, wretchBase} from '~/client/utils/constants.ts'
+  import {netlifyUser, wretchBase} from '~/client/utils/constants.ts'
   import PVAvatar, {type AvatarProps} from 'primevue/avatar'
   import PVBreadcrumb, {type BreadcrumbProps} from 'primevue/breadcrumb'
   import PVButton, {type ButtonProps} from 'primevue/button'
@@ -35,7 +35,7 @@
     }
   }
   const pvAvatarProps : AvatarProps = {
-    image: nfUser.value!.avatar_url,
+    image: netlifyUser.value!.avatar_url,
     pt: {
       image: 'border-rounded-full h-full w-full',
       root: 'h-10 w-10'
@@ -260,7 +260,7 @@
                 <CProgressSpinner v-bind:size="3" v-else/>
               </template>{{systemStatusIndicator.label}}</PVInlineMessage>
           </component>
-          <template v-if="nfUser">
+          <template v-if="netlifyUser">
             <PVButton v-bind="pvButtonAvatarProps" v-on:click="userMenuToggle">
               <PVAvatar v-bind="pvAvatarProps"/>
             </PVButton>
@@ -283,8 +283,8 @@
                 <hr v-if="pvMenuItem.item.separator"/>
               </template>
               <template v-slot:start>
-                <p class="font-500 m-0">{{nfUser.full_name}}</p>
-                <p class="m-0 text-3.5 dark:text-neutral-dark-200">{{nfUser.email}}</p>
+                <p class="font-500 m-0">{{ netlifyUser.full_name }}</p>
+                <p class="m-0 text-3.5 dark:text-neutral-dark-200">{{ netlifyUser.email }}</p>
               </template>
             </PVMenu>
           </template>
