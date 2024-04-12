@@ -2,7 +2,7 @@
   import CIcon from '~/client/components/c-icon.vue'
   import CSkeleton from '~/client/components/c-skeleton.vue'
   import CTicketListItem from '~/client/components/c-ticket-list-item.vue'
-  import {onMounted, ref} from 'vue'
+  import {onMounted, ref, watch} from 'vue'
   import PVButton, {type ButtonProps} from 'primevue/button'
   import PVCard, {type CardProps} from 'primevue/card'
   import PVColumn, {type ColumnProps} from 'primevue/column'
@@ -10,7 +10,7 @@
   import PVDataView from 'primevue/dataview'
   import PVOverlayPanel, {type OverlayPanelProps} from 'primevue/overlaypanel'
   import type {TZTickets} from '~/types/global.ts'
-  import {wretchBase} from '~/client/utils/constants.ts'
+  import {wretchBase, zendeskUser} from '~/client/utils/constants.ts'
   const pvButtonStatusProps : ButtonProps = {
     pt: {
       label: 'order-1',
@@ -72,10 +72,16 @@
   const ticketListError = ref<boolean>(false)
   const ticketListFetched = ref<boolean>(false)
   const ticketStatusOverlay = ref<null | PVOverlayPanel>(null)
+  const zendeskUserWatcher = watch(zendeskUser, async () => {
+    await fetchTickets()
+  })
   async function fetchTickets() {
     try {
-      ticketList.value = await wretchBase.get('/tickets/list').json<TZTickets>()
-      ticketListFetched.value = true
+      if (zendeskUser.value) {
+        zendeskUserWatcher()
+        ticketList.value = await wretchBase.get('/tickets/list').json<TZTickets>()
+        ticketListFetched.value = true
+      }
     } catch {
       // TODO: handle error
       ticketListError.value = true
@@ -96,13 +102,16 @@
       <template v-slot:content>
         <PVDataView data-key="id" v-bind:value="ticketList.tickets.slice(0, 4)">
           <template v-slot:empty>
-            <p v-if="ticketListFetched">No tickets found</p>
-            <div class="dark:odd:bg-neutral-000/3 odd:bg-neutral-light-100/50 box-border flex gap-x-3 items-center h-12 p-3" v-bind:key="i" v-for="i in 5" v-else>
-              <CSkeleton width="4rem"/>
-              <CSkeleton width="4rem"/>
-              <CSkeleton class="flex-1"/>
-              <CSkeleton width="6rem"/>
-            </div>
+            <template v-if="zendeskUser">
+              <p v-if="ticketListFetched">No tickets found</p>
+              <div class="dark:odd:bg-neutral-000/3 odd:bg-neutral-light-100/50 box-border flex gap-x-3 items-center h-12 p-3" v-bind:key="i" v-for="i in 5" v-else>
+                <CSkeleton width="4rem"/>
+                <CSkeleton width="4rem"/>
+                <CSkeleton class="flex-1"/>
+                <CSkeleton width="6rem"/>
+              </div>
+            </template>
+            <p v-else>Not a Zendesk user</p>
           </template>
           <template v-slot:list="pvDataViewListItems">
             <div class="dark:odd:bg-neutral-000/3 odd:bg-neutral-light-100/50 box-border decoration-none flex gap-x-3 p-3">
